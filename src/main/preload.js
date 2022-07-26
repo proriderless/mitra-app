@@ -9,7 +9,7 @@ const ipc = {
         'receive': [],
         // From render to main and back again.
         'sendReceive': [
-            'dialog:openImageDirectorySelect', // Channel name
+            'dialog:openMediaDirectorySelect', // Channel name
             'codec:transformVideo',
             'video:getSubtitles'
         ]
@@ -42,7 +42,7 @@ contextBridge.exposeInMainWorld(
             }
         },
         sendSync: (channel, args) => {
-            let validChannels = ipc.render.send;
+            let validChannels = ipc.render.sendSync;
             if (validChannels.includes(channel)) {
                 ipcRenderer.sendSync(channel, args);
             }

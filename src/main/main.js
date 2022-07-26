@@ -67,10 +67,10 @@ app.on("window-all-closed", function () {
 // code. You can also put them in separate files and require them here.
 
 //For Getting images and directories!
-const image = require("./image/image");
+const image = require("./media/media");
 image.openImageDirectorySelect;
 image.absoluteImagePaths;
 
-const video = require("./video/video")
-video.ffmpegCodecStream;
-video.retrieveSubtitle;
+const subtitles = require("./subtitles/subtitles")
+subtitles.ffmpegCodecStream;
+subtitles.retrieveSubtitle;

@@ -16,7 +16,7 @@ export enum EAnime {
 }
 
 export enum EIpcListener {
-    OPEN_IMAGE_DIRECTORY_SELECT = 'dialog:openImageDirectorySelect',
+    OPEN_IMAGE_DIRECTORY_SELECT = 'dialog:openMediaDirectorySelect',
     CODEC_TRANSFORM_VIDEO = "codec:transformVideo",
     RETRIEVE_SUBTITLES = "video:getSubtitles",
 }

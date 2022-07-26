@@ -1,21 +1,33 @@
 import React from "react";
-import { FullContainerView } from "../../Utils/commonStyles";
 import ReactPlayer from "react-player";
 import {
   InlineContainer,
   FlexContainerCenter,
   MediaVideoControlContainer,
   TinyText,
+  AlignFarLeft,
+  AlignFarRight,
 } from "./ControlStyled";
-import IconButton from "@mui/material/IconButton";
-import FastRewindIcon from "@mui/icons-material/FastRewind";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import FastForwardIcon from "@mui/icons-material/FastForward";
 import Slider from "@mui/material/Slider";
 import PauseIcon from "@mui/icons-material/Pause";
 import { formatDuration } from "../../Utils/stringutils";
 import { textAlign } from "@mui/system";
 import { EIpcListener } from "../../Utils/enums";
+import JASSUB from "jassub";
+// import workerUrl from './jassub/dist/jassub-worker.js?url'
+import "jassub/dist/jassub-worker.wasm?url";
+import {
+  EmptySeparator,
+  FullContainerView,
+  FloatingContainerView,
+} from "../../Utils/commonStyles";
+import IconButton from "@mui/material/IconButton";
+import AspectRatioIcon from "@mui/icons-material/AspectRatio";
+import FastRewindIcon from "@mui/icons-material/FastRewind";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import FastForwardIcon from "@mui/icons-material/FastForward";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import HideSourceIcon from '@mui/icons-material/HideSource';
 
 declare global {
   interface Window {
@@ -23,64 +35,131 @@ declare global {
   }
 }
 
-function MediaPlayer() {
-  // const [videoSrc, setVideoSrc] = React.useState(
-  //   "D:\\Downloads\\[MTBB] Made in Abyss - The Golden City of the Scorching Sun - 02 [4CBE3A6B].mkv"
-  // );
-  const [videoSrc, setVideoSrc] = React.useState(
-    "D:\\Downloads\\[Erai-raws] Made in Abyss - Retsujitsu no Ougonkyou - 02 [1080p][CAA8D256].mkv"
-  );
-  const convertSrc = "D:\\Downloads\\outputFile.mp4"
-  const [totalVideoDuration, setTotalVideoDuration] = React.useState();
-  const [durationPlayed, setDurationPlayed] = React.useState<number>(0)
-  const [playingState, setPlayingState] = React.useState(false);
-  const [subtitleTrack, setSubtitleTrack] = React.useState()
-  const videoRef = React.useRef<ReactPlayer>(null);
-  
+type IProps = {
+  mediaSrc: string,
+  setMediaPlayerVisible: any //a function that sets the visibility of the media player
+}
 
-  function durationCheck(e: any) {
+function MediaPlayer(props:IProps) {
+
+  const {mediaSrc, setMediaPlayerVisible} = props
+
+  const [videoSrc, setVideoSrc] = React.useState(mediaSrc);
+  const [totalVideoDuration, setTotalVideoDuration] = React.useState<number>();
+  const [durationPlayed, setDurationPlayed] = React.useState<number>(0);
+  const [playingState, setPlayingState] = React.useState(false);
+  const [subtitleTrack, setSubtitleTrack] = React.useState("");
+  const [videoVisible, setVideoVisible] = React.useState(false);
+  const [videoExpand, setVideoExpand] = React.useState(false)
+  const [videoWidthHeight, setVideoWidthHeight] = React.useState({
+    width: "50%",
+    height: "50%"
+  })
+  const [visibleControlPanel, setVisibleControlPanel] = React.useState('1')
+  const videoRef = React.useRef<ReactPlayer>(null);
+
+  //Startup Actions
+  React.useEffect(() => {
+    if (videoSrc.endsWith('.mkv')){
+      retrieveSubtitles();
+    } else {
+      setVideoVisible(true);
+    }
+    setInterval(() => setVisibleControlPanel('0'), 10000)
+  }, []);
+
+  function durationCheck(e: number) {
     setTotalVideoDuration(e);
   }
 
   const handleTimeChange = (event: Event, newValue: number | number[]) => {
     setDurationPlayed(Number(newValue));
-    videoRef.current?.seekTo(Number(newValue))
+    videoRef.current?.seekTo(Number(newValue));
   };
 
   function retrieveSubtitles() {
-    window.ipcRenderer.invoke(EIpcListener.RETRIEVE_SUBTITLES, videoSrc)
-    .then((response:any)=>{
-      console.log(JSON.parse(response))
-      
-    })
-    .catch((error:any)=>{
-      console.log(error)
-    })
+    window.ipcRenderer
+      .invoke(EIpcListener.RETRIEVE_SUBTITLES, videoSrc)
+      .then((response: any) => {
+        var options = {
+          video: videoRef.current,
+          subContent: response,
+        };
+
+        if (response !== "") {
+          setSubtitleTrack(
+            "D:\\Desktop\\Projects\\Personal Projects\\Personal Program\\mitra-app\\testSubtitle.vtt"
+          );
+        }
+
+        setVideoVisible(true);
+      })
+      .catch((error: any) => {
+        console.log(error);
+        setVideoVisible(true);
+      });
   }
 
-  React.useEffect(() => {
-    console.log('triggeredf')
-    retrieveSubtitles()
-  }, [playingState])
+  function setVideoExpandState() {
+    let copiedVideoWidthHeight = {
+      ...videoWidthHeight
+    }
+    if (videoExpand === false){
+      copiedVideoWidthHeight.height = '100%'
+      copiedVideoWidthHeight.width = '100%'
+    } else {
+      copiedVideoWidthHeight.height = 'auto'
+      copiedVideoWidthHeight.width = '50%'
+    }
+    setVideoExpand(!videoExpand)
+    setVideoWidthHeight(copiedVideoWidthHeight)
+  }
+
+  //Set whether the controls become visible
+
+  function setControlPanelVisibility(e:React.MouseEvent<Element, MouseEvent>) {
+    if (visibleControlPanel === '0'){
+      setVisibleControlPanel('1')
+      setInterval(() => setVisibleControlPanel('0'), 10000)
+    }
+    e.preventDefault()
+  }
 
   return (
     <>
-      <FullContainerView width="100%" height="auto">
-        <ReactPlayer
-          ref={videoRef}
-          url={videoSrc}
-          playing={playingState}
-          controls={false}
-          width="100%"
-          height="100%"
-          onDuration={(e) => durationCheck(e)}
-          onProgress={(progress) => {setDurationPlayed(progress.playedSeconds)}}
-          progressInterval={1000}
-        />
+      <FloatingContainerView width={videoWidthHeight.width} height={videoWidthHeight.height} zIndex="1000000" onMouseMove={(e) => setControlPanelVisibility(e)}>
+        {videoVisible && (
+          <ReactPlayer
+            ref={videoRef}
+            url={videoSrc}
+            playing={playingState}
+            controls={false}
+            width="100%"
+            height="100%"
+            onDuration={(e) => durationCheck(e)}
+            onProgress={(progress) => {
+              setDurationPlayed(progress.playedSeconds);
+            }}
+            progressInterval={1000}
+            config={{
+              file: {
+                tracks: [
+                  {
+                    kind: "subtitles",
+                    label: "English",
+                    src: subtitleTrack,
+                    srcLang: "en",
+                    default: true,
+                  },
+                ],
+              },
+            }}
+          />
+        )}
 
         {/* Media Player controls */}
 
-        <MediaVideoControlContainer>
+        <MediaVideoControlContainer opacity={visibleControlPanel}>
           {/* Sliders */}
           <FlexContainerCenter>
             <Slider
@@ -98,13 +177,19 @@ function MediaPlayer() {
             <div style={{ position: "absolute", textAlign: "left" }}>
               <TinyText>{formatDuration(durationPlayed)}</TinyText>
             </div>
-            <div style={{textAlign: "right" }}>
+            <div style={{ textAlign: "right" }}>
               <TinyText>{formatDuration(totalVideoDuration)}</TinyText>
             </div>
           </InlineContainer>
 
           <FlexContainerCenter>
-            <IconButton aria-label="Move back by 10" onClick={() => {setDurationPlayed(durationPlayed - 10); videoRef.current?.seekTo(Number(durationPlayed - 10))}}>
+            <IconButton
+              aria-label="Move back by 10"
+              onClick={() => {
+                setDurationPlayed(durationPlayed - 10);
+                videoRef.current?.seekTo(Number(durationPlayed - 10));
+              }}
+            >
               <FastRewindIcon />
             </IconButton>
             <IconButton
@@ -118,12 +203,36 @@ function MediaPlayer() {
                 <PlayArrowIcon sx={{ fontSize: "40px" }} fontSize="large" />
               )}
             </IconButton>
-            <IconButton aria-label="Move forward 10" onClick={() => {setDurationPlayed(durationPlayed + 10); videoRef.current?.seekTo(Number(durationPlayed + 10))}}>
+            <IconButton
+              aria-label="Move forward 10"
+              onClick={() => {
+                setDurationPlayed(durationPlayed + 10);
+                videoRef.current?.seekTo(Number(durationPlayed + 10));
+              }}
+            >
               <FastForwardIcon />
+            </IconButton>
+            <IconButton
+              aria-label="expand player to cover screen"
+              onClick = {setVideoExpandState}
+              >
+                <AspectRatioIcon />
+            </IconButton>
+            <IconButton
+              aria-label="close the media player"
+              onClick={() => setMediaPlayerVisible(false)}
+              >
+                <HighlightOffIcon />
+            </IconButton>
+            <IconButton
+              aria-label="hide the control panel"
+              onClick={() => setVisibleControlPanel('0')}
+              >
+                <HideSourceIcon />
             </IconButton>
           </FlexContainerCenter>
         </MediaVideoControlContainer>
-      </FullContainerView>
+      </FloatingContainerView>
     </>
   );
 }

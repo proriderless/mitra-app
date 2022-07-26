@@ -3,7 +3,7 @@ import "./App.css";
 import { Drawer } from "@mui/material";
 import SideBarComp from "./UiComponents/SideBar";
 import Box from "@mui/material/Box";
-import TabPages from "./UiComponents/Tab";
+import TabPages from "./UiComponents/GlobalTab";
 import { EBasePage } from "./Utils/enums";
 
 // This is the entrance page.

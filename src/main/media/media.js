@@ -4,7 +4,7 @@ const electronDialog = require("electron").dialog;
 const electronIpcMain = require("electron").ipcMain;
 
 function checkIfFileContainsExtension(validExtension, str) {
-  return validExtension.some((substring) => str.includes(substring));
+  return validExtension.some((substring) => str.endsWith(substring));
 }
 
 const getDirectories = source =>
@@ -25,13 +25,34 @@ function absoluteImagePaths(parentPath) {
   return imageFiles
 }
 
-//Open image, takes in a optional parameter called parentDirectory
+function absoluteVideoPaths(parentPath) {
+  var videoFiles = []
+  nodeFs.readdirSync(parentPath).forEach(file => {
+      let filterList = [".3g2", ".3gp", ".mp4", ".mov", ".webm", ".mkv"];
+      if (checkIfFileContainsExtension(filterList, file) === true) {
+        videoFiles.push("mitra:///" + parentPath + nodePath.sep + file);
+      }
+    
+  });
+
+  return videoFiles
+}
+
+//Convert file to base 64
+function base64_encode(file) {
+  // read binary data
+  var bitmap = fs.readFileSync(file);
+  // convert binary data to base64 encoded string
+  return Buffer.from(bitmap).toString('base64');
+}
+
+//Open Video plus Image, takes in a optional parameter called parentDirectory
 const openImageDirectorySelect = electronIpcMain.handle(
-  "dialog:openImageDirectorySelect",
+  "dialog:openMediaDirectorySelect",
   (event, parentDirectory) => {
 
     let options = {
-      title: "Select Directory Containing Images",
+      title: "Select Directory Containing Media",
       properties: ["openDirectory"],
     };
 
@@ -44,12 +65,14 @@ const openImageDirectorySelect = electronIpcMain.handle(
             return;
           }
 
-          var imagePaths =  absoluteImagePaths(result.filePaths[0]);
-          var directories = getDirectories(result.filePaths[0]);
+          let imagePaths = absoluteImagePaths(result.filePaths[0]);
+          let videoPaths = absoluteVideoPaths(result.filePaths[0])
+          let directories = getDirectories(result.filePaths[0]);
 
-          var returnObject = JSON.stringify({
+          let returnObject = JSON.stringify({
             directories: directories,
-            paths: imagePaths,
+            imagePaths: imagePaths,
+            videoPaths: videoPaths,
             directory: result.filePaths[0],
           });
 
@@ -59,12 +82,13 @@ const openImageDirectorySelect = electronIpcMain.handle(
           console.log(error);
         });
     } else {
-      //TO DO: CONVERT ABSOLUTE IMAGE PATH TO NON_ASYNC
-      var imagePaths = absoluteImagePaths(parentDirectory);
-      var directories = getDirectories(parentDirectory);
+      let imagePaths = absoluteImagePaths(parentDirectory);
+      let videoPaths = absoluteVideoPaths(parentDirectory);
+      let directories = getDirectories(parentDirectory);
 
-      var returnObject = JSON.stringify({
-        paths: imagePaths,
+      let returnObject = JSON.stringify({
+        imagePaths: imagePaths,
+        videoPaths: videoPaths,
         directory: parentDirectory,
         directories: directories,
       });

@@ -1,6 +1,10 @@
 import styled from "styled-components";
 import { Typography } from "@mui/material";
 
+interface IMediaVideoControlContainer{
+  opacity?: string,
+}
+
 export const FlexContainerCenter = styled("div")`
   display: flex;
   flex-direction: row;
@@ -13,12 +17,14 @@ export const InlineContainer = styled("div")`
   display: inline;
 `;
 
-export const MediaVideoControlContainer = styled("div")`
+export const MediaVideoControlContainer = styled("div")<IMediaVideoControlContainer>`
+  display: 'inline';
   background-color: rgba(255, 255, 255, 0.55);
   border-radius: 5px;
   padding: 1rem 5px;
   -webkit-backdrop-filter: blur(10px);
   position: absolute;
+  opacity: ${p => p.opacity || 1};
   left: 0;
   right: 0;
   top: 0;
@@ -42,5 +48,6 @@ export const AlignFarLeft = styled('div')`
 `
 
 export const AlignFarRight = styled('div')`
-  text-align: right
+  align-item: flex-end;
+  position: absolute;
 `
