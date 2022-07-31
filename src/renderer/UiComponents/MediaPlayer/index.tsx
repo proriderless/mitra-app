@@ -28,6 +28,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import FastForwardIcon from "@mui/icons-material/FastForward";
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import HideSourceIcon from '@mui/icons-material/HideSource';
+import * as Mousetrap from 'mousetrap'
 
 declare global {
   interface Window {
@@ -67,6 +68,24 @@ function MediaPlayer(props:IProps) {
     }
     setInterval(() => setVisibleControlPanel('0'), 10000)
   }, []);
+
+  //Mouse bindings for video control
+  React.useEffect(() => {
+    Mousetrap.bind(['space'], () => setPlayingState(!playingState))
+    Mousetrap.bind(['right'], () => {
+      setDurationPlayed(durationPlayed + 10);
+      videoRef.current?.seekTo(Number(durationPlayed + 10))
+    })
+    Mousetrap.bind(['left'], () => {
+      setDurationPlayed(durationPlayed- 10);
+      videoRef.current?.seekTo(Number(durationPlayed - 10))
+    })
+
+    return () => {
+      Mousetrap.unbind(['left', 'right']);
+      Mousetrap.unbind(['space'])
+    };
+  })
 
   function durationCheck(e: number) {
     setTotalVideoDuration(e);

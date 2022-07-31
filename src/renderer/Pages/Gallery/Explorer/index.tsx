@@ -2,20 +2,14 @@ import React from "react";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { WebTorrent } from "webtorrent";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
-import ImageSpotlight from "./ImageSpotlight";
-import VideoCard from "../../../UiComponents/VideoCard";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import { EIpcListener } from "../../../Utils/enums";
 import MediaPlayer from "../../../UiComponents/MediaPlayer";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import IconButton from "@mui/material/IconButton";
 import { EmptySeparator, FullContainerView } from "../../../Utils/commonStyles";
 import { TabPanel, allyProps } from "../../../UiComponents/GlobalTab/TabPanel";
 import Tabs from "@mui/material/Tabs";
@@ -53,13 +47,10 @@ function Explorer() {
 
   function onChangeDirectory(value: string) {
     if (value !== "...") {
-
       let setTempDir = currDirectory + "\\" + value;
       summonWindow(setTempDir);
       setCurrDirectory(setTempDir);
-
     } else if (value === "...") {
-
       let setTempDir = currDirectory?.split("\\");
 
       setTempDir?.pop();
@@ -124,15 +115,21 @@ function Explorer() {
     <>
       {/* Media Player */}
 
-      {mediaPlayerVisible && <MediaPlayer mediaSrc={videoSrc} setMediaPlayerVisible={setMediaPlayerVisible}/>}
+      {mediaPlayerVisible && (
+        <MediaPlayer
+          mediaSrc={videoSrc}
+          setMediaPlayerVisible={setMediaPlayerVisible}
+        />
+      )}
 
       {/* Control Sector */}
       <FullContainerView width="100%" height="auto">
-        <Grid container spacing={3}>
+        <Grid container spacing={1}>
           <Grid item xs={2}>
             <FormControl fullWidth>
               <InputLabel id="change_column_label_id">Image Column</InputLabel>
               <Select
+                size='small'
                 labelId="change_column_label_id"
                 id="change_column_id"
                 value={imageColumnsCount}
@@ -147,16 +144,26 @@ function Explorer() {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={6}>
-            <FormControl fullWidth>
+          <Grid item xs={5}>
+            <IconButton
+              color="primary"
+              aria-label="left image navigate"
+              component="span"
+              onClick={() => onChangeDirectory("...")}
+              size="large"
+            >
+              <ArrowBackIcon />
+            </IconButton>
+            <FormControl sx={{minWidth: '80px', width: '80%' }}>
               <InputLabel id="change_directory_selection_label_id">
-                Directory Navigation
+                Directory
               </InputLabel>
               <Select
+                size='small'
                 labelId="change_directory_selection_label_id"
                 id="change_directory_selection_id"
                 value={"currDirectory"}
-                label="Navigate Directory"
+                label="Directory"
                 onChange={(e) => {
                   onChangeDirectory(e.target.value);
                 }}
@@ -196,10 +203,18 @@ function Explorer() {
             </Tabs>
           </Box>
           <TabPanel value={tabIndex} index={0}>
-            <ImageView imageColumnsCount={imageColumnsCount} imageList={imageList} />
+            <ImageView
+              imageColumnsCount={imageColumnsCount}
+              imageList={imageList}
+            />
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
-            <VideoView videoList={videoList} setMediaPlayerVisible={setMediaPlayerVisible} mediaPlayerVisible={mediaPlayerVisible} setVideoSrc={setVideoSrc}/>
+            <VideoView
+              videoList={videoList}
+              setMediaPlayerVisible={setMediaPlayerVisible}
+              mediaPlayerVisible={mediaPlayerVisible}
+              setVideoSrc={setVideoSrc}
+            />
           </TabPanel>
         </Box>
       </FullContainerView>

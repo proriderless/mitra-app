@@ -39,7 +39,7 @@ function msToTime(s, format = "vtt") {
 
 //PROMISIFY EVENT EMITTER: https://stackoverflow.com/questions/45967019/nodejs-7-eventemitter-await-async
 
-function createAssFile(trackInfoHeader, trackInfoSubtitles) {
+function createAssFormat(trackInfoHeader, trackInfoSubtitles) {
   //Add in the header information, before we move onto the subtitles
   let outputText = trackInfoHeader;
 
@@ -70,7 +70,7 @@ function createAssFile(trackInfoHeader, trackInfoSubtitles) {
   return outputText;
 }
 
-function createVttFile(trackInfoSubtitles) {
+function createVttFormat(trackInfoSubtitles) {
   let outputText = "WEBVTT\n\n";
 
   for (subtitleText of trackInfoSubtitles) {
@@ -100,13 +100,13 @@ function createSubtitleFile(trackInfo) {
 
   switch (fileType) {
     case "ass":
-      outputSubtitle = createAssFile(
+      outputSubtitle = createAssFormat(
         trackSubtitleInfo.header,
         trackSubtitleInfo.subtitles
       );
       break;
     case "vtt":
-      outputSubtitle = createVttFile(trackSubtitleInfo.subtitles);
+      outputSubtitle = createVttFormat(trackSubtitleInfo.subtitles);
       break;
     default:
       return false;

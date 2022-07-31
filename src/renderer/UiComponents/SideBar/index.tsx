@@ -20,7 +20,7 @@ import CalendarViewMonthIcon from '@mui/icons-material/CalendarViewMonth';
 import LiveTvIcon from '@mui/icons-material/LiveTv';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import ImageIcon from '@mui/icons-material/Image';
-import { EBasePage, EGallery } from "../../Utils/enums";
+import { EBasePage, EGallery, EAnime } from "../../Utils/enums";
 import {TabPageContext} from '../../Provider'
 
 function SideBarComp() {
@@ -100,7 +100,7 @@ function SideBarComp() {
         </ListItemButton>
         <Collapse in={openAnimeList} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton sx={{ pl: 3 }}>
+            <ListItemButton onClick={() => handleClickTraverse(EBasePage.ANIME, EAnime.SEASON_VIEWER)} sx={{ pl: 3 }}>
               <ListItemIcon>
                 <CalendarViewMonthIcon />
               </ListItemIcon>

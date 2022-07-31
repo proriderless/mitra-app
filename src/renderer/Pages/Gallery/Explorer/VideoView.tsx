@@ -20,8 +20,6 @@ function VideoView(props: IProps) {
 
   return (
     <>
-      {/* {mediaPlayerVisible && <MediaPlayer mediaSrc={videoSrc} closeVidPlayer={setMediaPlayerVisible} />} */}
-
       <div style={{ display: "flex", flexFlow: 'wrap', padding: "5px" }}>
         {videoList.map((item, i) => (
           <VideoCard key={i} videoSrc={item} summonMediaPlayer={summonMediaPlayer} />

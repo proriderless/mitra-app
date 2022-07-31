@@ -21,7 +21,7 @@ function AllPage(props:IProps) {
             )
         case EBasePage.ANIME:
             return (
-                <Anime/>
+                <Anime displayComponent={subPage}/>
             )
         case EBasePage.GALLERY:
             return (

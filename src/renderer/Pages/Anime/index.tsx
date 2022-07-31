@@ -1,20 +1,25 @@
 //This will be the entrance component, which will display the respective tabs
 import React from "react";
+import {EAnime} from '../../Utils/enums'
+import SeasonViewer from './SeasonViewer'
 
 interface IProps {
-  displayComponent: string
+  displayComponent: string;
 }
 
-function Anime() {
-  
+function Anime(props: IProps) {
+  const { displayComponent } = props;
 
-  return (
-    <>
-      Base page for anime
-    </>
-  )
-
-  
+  switch (displayComponent) {
+    case EAnime.SEASON_VIEWER:
+      return (
+        <>
+          <SeasonViewer />
+        </>
+      );
+    default:
+      return <>There's nothing in anime.</>;
+  }
 }
 
 export default Anime;
