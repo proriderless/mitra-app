@@ -100,6 +100,12 @@ function SideBarComp() {
         </ListItemButton>
         <Collapse in={openAnimeList} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
+          <ListItemButton onClick={() => handleClickTraverse(EBasePage.ANIME, EAnime.SEARCH_VIEWER)} sx={{ pl: 3 }}>
+              <ListItemIcon>
+                <CalendarViewMonthIcon />
+              </ListItemIcon>
+              <ListItemText primary="Search" />
+            </ListItemButton>
             <ListItemButton onClick={() => handleClickTraverse(EBasePage.ANIME, EAnime.SEASON_VIEWER)} sx={{ pl: 3 }}>
               <ListItemIcon>
                 <CalendarViewMonthIcon />

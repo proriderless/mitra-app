@@ -11,6 +11,7 @@ export enum EGallery {
 }
 
 export enum EAnime {
+    SEARCH_VIEWER = 'Search Viewer',
     SEASON_VIEWER = 'Season Viewer',
     TORRENT_VIEWER = 'Torrent Viewer'
 }
