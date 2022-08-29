@@ -13,7 +13,6 @@ import PauseIcon from "@mui/icons-material/Pause";
 import { formatDuration } from "../../Utils/stringutils";
 import { textAlign } from "@mui/system";
 import { EIpcListener } from "../../Utils/enums";
-import JASSUB from "jassub";
 // import workerUrl from './jassub/dist/jassub-worker.js?url'
 import "jassub/dist/jassub-worker.wasm?url";
 import {
@@ -66,7 +65,7 @@ function MediaPlayer(props:IProps) {
     } else {
       setVideoVisible(true);
     }
-    setInterval(() => setVisibleControlPanel('0'), 10000)
+    setInterval(() => setVisibleControlPanel('0'), 5000)
   }, []);
 
   //Mouse bindings for video control

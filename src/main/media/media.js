@@ -46,6 +46,28 @@ function base64_encode(file) {
   return Buffer.from(bitmap).toString('base64');
 }
 
+const openVideoSelect = electronIpcMain.handle(
+  "dialog:openMediaFile",
+  (event) => {
+    let options ={
+      title: "Select Media to play",
+      properties: ['openFile', 'showHiddenFiles', 'dontAddToRecent'],
+      filters: [".3g2", ".3gp", ".mp4", ".mov", ".webm", ".mkv"],
+    }
+    
+    return electronDialog.showOpenDialog(options)
+    .then(async (result) => {
+      if (result.canceled) {
+        return;
+      }
+      return result.filePaths[0]
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  }
+)
+
 //Open Video plus Image, takes in a optional parameter called parentDirectory
 const openImageDirectorySelect = electronIpcMain.handle(
   "dialog:openMediaDirectorySelect",
@@ -106,4 +128,4 @@ const openImageDirectorySelect = electronIpcMain.handle(
   }
 );
 
-module.exports = { openImageDirectorySelect };
+module.exports = { openImageDirectorySelect, openVideoSelect };

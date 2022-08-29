@@ -2,6 +2,7 @@ import React from 'react'
 import Home from '../../Pages/Home'
 import Gallery from '../../Pages/Gallery'
 import Anime from '../../Pages/Anime'
+import Productivity from '../../Pages/Productivity'
 import { EBasePage } from "../../Utils/enums";
 
 //This is an 'all page' that will determine which base page it will create
@@ -26,6 +27,10 @@ function AllPage(props:IProps) {
         case EBasePage.GALLERY:
             return (
                 <Gallery displayComponent={subPage} />
+            )
+        case EBasePage.PRODUCTIVITY:
+            return (
+                <Productivity displayComponent={subPage} />
             )
         default: 
             return (

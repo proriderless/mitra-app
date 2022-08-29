@@ -62,6 +62,18 @@ function Explorer() {
     }
   }
 
+  function selectMediaToPlay() {
+    window.ipcRenderer.invoke(EIpcListener.OPEN_VIDEO)
+    .then((pathResult:any) => {
+      if (pathResult === undefined){
+        return;
+      }
+      setVideoSrc(pathResult)
+      setMediaPlayerVisible(true)
+    })
+
+  }
+
   //Call Directory Dialog
   function summonWindow(parentDirectory = "") {
     window.ipcRenderer
@@ -180,12 +192,13 @@ function Explorer() {
             </Button>
           </Grid>
           <Grid item xs={2}>
-            {/* <Button
+            
+            <Button
               variant="contained"
-              onClick={() => setMediaPlayerVisible(!mediaPlayerVisible)}
+              onClick={selectMediaToPlay}
             >
               Show Media Player
-            </Button> */}
+            </Button>
           </Grid>
         </Grid>
 

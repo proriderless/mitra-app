@@ -3,7 +3,8 @@
 export enum EBasePage {
     HOME = 'Home',
     ANIME = 'Anime',
-    GALLERY = 'Gallery'
+    GALLERY = 'Gallery',
+    PRODUCTIVITY = 'Productivity'
   }
 
 export enum EGallery {
@@ -16,8 +17,14 @@ export enum EAnime {
     TORRENT_VIEWER = 'Torrent Viewer'
 }
 
+export enum EProductivity {
+    MAIN_CALENDAR = 'Main Calendar'
+}
+
 export enum EIpcListener {
     OPEN_IMAGE_DIRECTORY_SELECT = 'dialog:openMediaDirectorySelect',
+    OPEN_VIDEO = 'dialog:openMediaFile',
     CODEC_TRANSFORM_VIDEO = "codec:transformVideo",
     RETRIEVE_SUBTITLES = "video:getSubtitles",
+    STARTUP_FOLDER = "folder:openStartupFolder",
 }

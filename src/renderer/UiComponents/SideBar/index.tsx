@@ -20,16 +20,28 @@ import CalendarViewMonthIcon from '@mui/icons-material/CalendarViewMonth';
 import LiveTvIcon from '@mui/icons-material/LiveTv';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import ImageIcon from '@mui/icons-material/Image';
-import { EBasePage, EGallery, EAnime } from "../../Utils/enums";
+import SettingsIcon from '@mui/icons-material/Settings';
+import { EBasePage, EGallery, EAnime, EProductivity, EIpcListener } from "../../Utils/enums";
 import {TabPageContext} from '../../Provider'
+
+declare global {
+  interface Window {
+    ipcRenderer: any;
+  }
+}
 
 function SideBarComp() {
   const theme = useTheme();
   const [openDrawer, setOpenDrawer] = React.useState(true);
+  const [openProductivityList, setOpenProductivtyList] = React.useState(true)
   const [openAnimeList, setOpenAnimeList] = React.useState(true);
   const [openImageViewerList, setOpenImageViewerList] = React.useState(true)
 
   const { tabPages, setTabPages } = React.useContext(TabPageContext)
+
+  const openStartupFile = () => {
+    window.ipcRenderer.invoke(EIpcListener.STARTUP_FOLDER).then((openResult:any) => {})
+  }
 
   const handleDrawerOpen = () => {
     setOpenDrawer(true);
@@ -41,6 +53,10 @@ function SideBarComp() {
 
   const handleClickAnime = () => {
     setOpenAnimeList(!openAnimeList);
+  };
+
+  const handleClickProductivity = () => {
+    setOpenProductivtyList(!openProductivityList);
   };
 
   const handleClickImage = () => {
@@ -90,6 +106,24 @@ function SideBarComp() {
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItemButton>
+
+        <ListItemButton onClick={handleClickProductivity}>
+          <ListItemIcon>
+            <MovieIcon />
+          </ListItemIcon>
+          <ListItemText primary="Productivity" />
+          {openAnimeList ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={openProductivityList} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton onClick={() => handleClickTraverse(EBasePage.PRODUCTIVITY, EProductivity.MAIN_CALENDAR)} sx={{ pl: 3 }}>
+              <ListItemIcon>
+                <ImageIcon />
+              </ListItemIcon>
+              <ListItemText primary="Calendar" />
+            </ListItemButton>
+          </List>
+        </Collapse>
 
         <ListItemButton onClick={handleClickAnime}>
           <ListItemIcon>
@@ -144,6 +178,13 @@ function SideBarComp() {
             </ListItemButton>
           </List>
         </Collapse>
+
+        <ListItemButton onClick={() => openStartupFile()}>
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Open Settings Folder" />
+        </ListItemButton>
 
       </List>
     </Drawer>

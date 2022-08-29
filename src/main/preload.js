@@ -9,8 +9,10 @@ const ipc = {
         'receive': [],
         // From render to main and back again.
         'sendReceive': [
-            'dialog:openMediaDirectorySelect', // Channel name
             'codec:transformVideo',
+            'dialog:openMediaDirectorySelect', // Channel name
+            'dialog:openMediaFile',
+            'folder:openStartupFolder',
             'video:getSubtitles'
         ]
     }
