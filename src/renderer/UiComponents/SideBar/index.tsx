@@ -13,16 +13,22 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import HomeIcon from '@mui/icons-material/Home';
-import MovieIcon from '@mui/icons-material/Movie';
-import PreviewIcon from '@mui/icons-material/Preview';
-import CalendarViewMonthIcon from '@mui/icons-material/CalendarViewMonth';
-import LiveTvIcon from '@mui/icons-material/LiveTv';
-import CollectionsIcon from '@mui/icons-material/Collections';
-import ImageIcon from '@mui/icons-material/Image';
-import SettingsIcon from '@mui/icons-material/Settings';
-import { EBasePage, EGallery, EAnime, EProductivity, EIpcListener } from "../../Utils/enums";
-import {TabPageContext} from '../../Provider'
+import HomeIcon from "@mui/icons-material/Home";
+import MovieIcon from "@mui/icons-material/Movie";
+import PreviewIcon from "@mui/icons-material/Preview";
+import CalendarViewMonthIcon from "@mui/icons-material/CalendarViewMonth";
+import LiveTvIcon from "@mui/icons-material/LiveTv";
+import CollectionsIcon from "@mui/icons-material/Collections";
+import ImageIcon from "@mui/icons-material/Image";
+import SettingsIcon from "@mui/icons-material/Settings";
+import {
+  EBasePage,
+  EGallery,
+  EAnime,
+  EProductivity,
+  EIpcListener,
+} from "../../Utils/enums";
+import { TabPageContext } from "../../Provider";
 
 declare global {
   interface Window {
@@ -33,15 +39,17 @@ declare global {
 function SideBarComp() {
   const theme = useTheme();
   const [openDrawer, setOpenDrawer] = React.useState(true);
-  const [openProductivityList, setOpenProductivtyList] = React.useState(true)
+  const [openProductivityList, setOpenProductivtyList] = React.useState(true);
   const [openAnimeList, setOpenAnimeList] = React.useState(true);
-  const [openImageViewerList, setOpenImageViewerList] = React.useState(true)
+  const [openImageViewerList, setOpenImageViewerList] = React.useState(true);
 
-  const { tabPages, setTabPages } = React.useContext(TabPageContext)
+  const { tabPages, setTabPages } = React.useContext(TabPageContext);
 
   const openStartupFile = () => {
-    window.ipcRenderer.invoke(EIpcListener.STARTUP_FOLDER).then((openResult:any) => {})
-  }
+    window.ipcRenderer
+      .invoke(EIpcListener.STARTUP_FOLDER)
+      .then((openResult: any) => {});
+  };
 
   const handleDrawerOpen = () => {
     setOpenDrawer(true);
@@ -63,15 +71,14 @@ function SideBarComp() {
     setOpenImageViewerList(!openImageViewerList);
   };
 
-  const handleClickTraverse = (mainPage: string, subPage:string) => {
-    
+  const handleClickTraverse = (mainPage: string, subPage: string) => {
     let updatedObject = {
-      ...tabPages
-    }
-    updatedObject[mainPage] = subPage
+      ...tabPages,
+    };
+    updatedObject[mainPage] = subPage;
 
-    setTabPages(updatedObject)
-  }
+    setTabPages(updatedObject);
+  };
 
   return (
     <Drawer variant="permanent" open={openDrawer}>
@@ -116,7 +123,15 @@ function SideBarComp() {
         </ListItemButton>
         <Collapse in={openProductivityList} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton onClick={() => handleClickTraverse(EBasePage.PRODUCTIVITY, EProductivity.MAIN_CALENDAR)} sx={{ pl: 3 }}>
+            <ListItemButton
+              onClick={() =>
+                handleClickTraverse(
+                  EBasePage.PRODUCTIVITY,
+                  EProductivity.MAIN_CALENDAR
+                )
+              }
+              sx={{ pl: 3 }}
+            >
               <ListItemIcon>
                 <ImageIcon />
               </ListItemIcon>
@@ -134,13 +149,23 @@ function SideBarComp() {
         </ListItemButton>
         <Collapse in={openAnimeList} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-          <ListItemButton onClick={() => handleClickTraverse(EBasePage.ANIME, EAnime.SEARCH_VIEWER)} sx={{ pl: 3 }}>
+            <ListItemButton
+              onClick={() =>
+                handleClickTraverse(EBasePage.ANIME, EAnime.SEARCH_VIEWER)
+              }
+              sx={{ pl: 3 }}
+            >
               <ListItemIcon>
                 <CalendarViewMonthIcon />
               </ListItemIcon>
               <ListItemText primary="Search" />
             </ListItemButton>
-            <ListItemButton onClick={() => handleClickTraverse(EBasePage.ANIME, EAnime.SEASON_VIEWER)} sx={{ pl: 3 }}>
+            <ListItemButton
+              onClick={() =>
+                handleClickTraverse(EBasePage.ANIME, EAnime.SEASON_VIEWER)
+              }
+              sx={{ pl: 3 }}
+            >
               <ListItemIcon>
                 <CalendarViewMonthIcon />
               </ListItemIcon>
@@ -170,7 +195,12 @@ function SideBarComp() {
         </ListItemButton>
         <Collapse in={openImageViewerList} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton onClick={() => handleClickTraverse(EBasePage.GALLERY, EGallery.EXPLORER)} sx={{ pl: 3 }}>
+            <ListItemButton
+              onClick={() =>
+                handleClickTraverse(EBasePage.GALLERY, EGallery.EXPLORER)
+              }
+              sx={{ pl: 3 }}
+            >
               <ListItemIcon>
                 <ImageIcon />
               </ListItemIcon>
@@ -185,7 +215,6 @@ function SideBarComp() {
           </ListItemIcon>
           <ListItemText primary="Open Settings Folder" />
         </ListItemButton>
-
       </List>
     </Drawer>
   );

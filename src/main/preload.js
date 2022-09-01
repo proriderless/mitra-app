@@ -1,6 +1,13 @@
 const contextBridge = require('electron').contextBridge;
 const ipcRenderer = require('electron').ipcRenderer;
 
+const mediaPreloadIPCID = ['dialog:openMediaFile', 'dialog:openMediaDirectorySelect']
+const subtitlesPreloadIPCID = ['video:getSubtitles', 'codec:transformVideo']
+const startupPreloadIPCID = ['folder:openStartupFolder']
+const schedulerLocalFilePreloadIPCID = ['update:scheduleFile', 'retrieve:scheduleFile']
+
+const fullSendReceiveIPCID = [mediaPreloadIPCID, subtitlesPreloadIPCID, startupPreloadIPCID, schedulerLocalFilePreloadIPCID].flat(1)
+
 const ipc = {
     'render': {
         // From render to main.
@@ -8,13 +15,7 @@ const ipc = {
         // From main to render.
         'receive': [],
         // From render to main and back again.
-        'sendReceive': [
-            'codec:transformVideo',
-            'dialog:openMediaDirectorySelect', // Channel name
-            'dialog:openMediaFile',
-            'folder:openStartupFolder',
-            'video:getSubtitles'
-        ]
+        'sendReceive': fullSendReceiveIPCID
     }
 };
 

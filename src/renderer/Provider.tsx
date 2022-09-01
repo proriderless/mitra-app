@@ -3,6 +3,7 @@ import { EBasePage } from "./Utils/enums";
 import App from "./App";
 import { StyledEngineProvider } from "@mui/material/styles";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import * as dotenv from 'dotenv'
 
 interface ITabPageStore {
   [key: string]: string;

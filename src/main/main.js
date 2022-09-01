@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain, protocol, Notification } = require("electro
 const path = require("path");
 const isDev = require("electron-is-dev");
 const startupProcess = require("./startup/startup");
+const dotenv = require('dotenv').config()
 
 // webPreferences: {
 //   preload: path.join(__dirname, preload.js),
@@ -39,6 +40,8 @@ app.whenReady().then(() => {
 
   createWindow();
   startupProcess.runAllStartupFile()
+  //Set up ENV variable on MAIN side
+  dotenv
 
   app.on("activate", function () {
     // On macOS it's common to re-create a window in the app when the
@@ -81,3 +84,8 @@ image.openVideoSelect
 const subtitles = require("./subtitles/subtitles")
 subtitles.ffmpegCodecStream;
 subtitles.retrieveSubtitle;
+
+//Local schedule file retrieval
+const scheduler = require("./scheduler/scheduler")
+scheduler.updateScheduleFile
+scheduler.retrieveScheduleFile

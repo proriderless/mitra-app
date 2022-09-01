@@ -9,18 +9,63 @@ import SetEvent from "./SetEvent";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { DateTime } from "luxon";
+import { ESchedulerIpcListener, EUpdateMode } from "../../../Utils/enums";
 
 //import css
 import "@fullcalendar/daygrid/main.css";
 import "@fullcalendar/timegrid/main.css";
 
+declare global {
+  interface Window {
+    ipcRenderer: any;
+  }
+}
+
 function CalendarPage() {
   const calendarRef = React.useRef<any>();
   const [loadEvents, setLoadEvents] = React.useState<any>([]);
   const [openDialog, setOpenDialog] = React.useState(false);
-  const [selectedDate, setSelectedDate] = React.useState(
-    DateTime.now().toString()
-  );
+  const [selectedDate, setSelectedDate] = React.useState<DateTime>(DateTime.now());
+  const [globalIDState, setGlobalIDState] = React.useState<number>(1);
+  const [reloadCalendar, setReloadCalendar] = React.useState(true);
+  const [existingID, setExistingID] = React.useState<number>()
+  const [updateMode, setUpdateMode] = React.useState<EUpdateMode>(EUpdateMode.NEW)
+
+  function retrieveScheduleFile() {
+    window.ipcRenderer
+      .invoke(ESchedulerIpcListener.RETRIEVE_SCHEDULE_FILE)
+      .then((result: boolean | string) => {
+        if (result === false) {
+          console.log("something went wrong retrieving file");
+        } else if (typeof result === "string") {
+          let schedulerFile = JSON.parse(result);
+          setLoadEvents(schedulerFile["schedule"]);
+          let lengthOfSchedule = schedulerFile["schedule"].length;
+          //Set the global id as depending on the previous id
+          setGlobalIDState(
+            parseInt(schedulerFile["schedule"][lengthOfSchedule - 1]["id"])
+          );
+        }
+      });
+  }
+
+  //Handle event click callback
+  function handleEventClickCallBack(info:any) {
+    info.jsEvent.preventDefault()
+    setExistingID(info.event.id)
+    setUpdateMode(EUpdateMode.UPDATE)
+    handleDialogOpen()
+  }
+
+  React.useEffect(() => {
+    //Force re-render once
+    retrieveScheduleFile();
+    setReloadCalendar(false);
+    //updateCalendarSize();
+    setTimeout(updateCalendarSize, 500);
+    setTimeout(updateCalendarSize, 500);
+    console.log("run once");
+  }, []);
 
   const handleDialogOpen = () => {
     setOpenDialog(true);
@@ -40,31 +85,19 @@ function CalendarPage() {
     calendarApi.updateSize();
   }
 
-  React.useEffect(() => {
-    //Force re-render once
-    let events = [
-      {
-        id: "a",
-        title: "my event",
-        start: "2022-08-27T10:30:00",
-        end: "2022-08-27T12:30:00",
-        backgroundColor: "blue",
-        borderColor: "green",
-      },
-    ];
-    setLoadEvents(events);
-    updateCalendarSize();
-    setTimeout(updateCalendarSize, 1000);
-  }, []);
-
   //Update the scene when it's updated
   React.useEffect(() => {
-    updateCalendarSize();
+    setReloadCalendar(true);
+    setReloadCalendar(false);
+    setTimeout(updateCalendarSize, 500);
+    setTimeout(updateCalendarSize, 500);
+    console.log(loadEvents);
   }, [loadEvents]);
 
   function dateClickUpdate(dateClickInfo: any) {
-    let copDateClickInfo = {...dateClickInfo}
-    setSelectedDate(copDateClickInfo.dateStr);
+    let copDateClickInfo = { ...dateClickInfo };
+    setSelectedDate(DateTime.fromISO(copDateClickInfo.dateStr));
+    setUpdateMode(EUpdateMode.NEW)
     setOpenDialog(!openDialog);
   }
 
@@ -74,21 +107,29 @@ function CalendarPage() {
         Show Folder
       </Button>
 
-      <FullCalendar
-        // height={"100%"}
-        timeZone="UTC"
-        aspectRatio={1.5}
-        ref={calendarRef}
-        dateClick={dateClickUpdate}
-        plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
-        events={loadEvents}
-        initialView="dayGridMonth"
-        headerToolbar={{
-          //left: "prev, next, today",
-          center: "title",
-          left: "dayGridMonth, timeGridWeek, timeGridDay",
-        }}
-      />
+      {!reloadCalendar && (
+        <FullCalendar
+          // height={"100%"}
+          timeZone="UTC"
+          aspectRatio={1.5}
+          ref={calendarRef}
+          dateClick={dateClickUpdate}
+          plugins={[
+            dayGridPlugin,
+            timeGridPlugin,
+            listPlugin,
+            interactionPlugin,
+          ]}
+          eventClick={handleEventClickCallBack}
+          events={loadEvents}
+          initialView="dayGridMonth"
+          headerToolbar={{
+            //left: "prev, next, today",
+            center: "title",
+            left: "dayGridMonth, timeGridWeek, timeGridDay",
+          }}
+        />
+      )}
 
       <SetEvent
         visible={openDialog}
@@ -96,6 +137,12 @@ function CalendarPage() {
         setOpenDialog={handleDialogOpen}
         setCloseDialog={handleDialogClose}
         responsiveMediaQuery={fullScreen}
+        eventArray={loadEvents}
+        handleLoadEvent={setLoadEvents}
+        globalID={globalIDState}
+        handleGlobalID={setGlobalIDState}
+        updateExistingID={existingID}
+        handleUpdateMode={updateMode}
       />
     </>
   );

@@ -22,15 +22,30 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import CheckIcon from "@mui/icons-material/Check";
 import ToggleButton from "@mui/material/ToggleButton";
+import { ESchedulerIpcListener, EUpdateMode } from "../../../Utils/enums";
 
 import PopoverColorPicker from "../../../UiComponents/ColorPicker/index";
+
+import { handleSetEvents } from "./utils";
+
+declare global {
+  interface Window {
+    ipcRenderer: any;
+  }
+}
 
 interface IProps {
   setOpenDialog: any;
   setCloseDialog: any;
   visible: boolean;
   responsiveMediaQuery: any;
-  selectedDate: string;
+  selectedDate: DateTime;
+  eventArray: any;
+  handleLoadEvent: any;
+  globalID: number;
+  handleGlobalID: any;
+  updateExistingID?: number;
+  handleUpdateMode: EUpdateMode;
 }
 
 interface IFormComponents {
@@ -41,27 +56,112 @@ interface IFormComponents {
   endTime: string | undefined;
 }
 
+//updateExistingID ID is used if in update mode
+//Else will use global id
+
 function SetEvent(props: IProps) {
-  const { setCloseDialog, visible, responsiveMediaQuery, selectedDate } = props;
-  const selectedDateObj = new Date(selectedDate)
+  const {
+    setCloseDialog,
+    visible,
+    responsiveMediaQuery,
+    selectedDate,
+    eventArray,
+    globalID,
+    handleLoadEvent,
+    handleGlobalID,
+    updateExistingID,
+    handleUpdateMode,
+  } = props;
+
+  //TRY DEEP IMPORTING EVENTARRAY!
+  const selectedDateObj = DateTime.now();
+  const updatedIDIfNew = globalID + 1;
 
   //Form props items to hold
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
-  const [startDate, setStartDate] = React.useState<Date | null>(
-    selectedDateObj
+  const [startDate, setStartDate] = React.useState<DateTime | null>(
+    selectedDate
   );
-  const [startTime, setStartTime] = React.useState<string | null>();
-  const [endDate, setEndDate] = React.useState<Date | null>(
-    selectedDateObj
-  );
-  const [endTime, setEndTime] = React.useState<string | null>();
+  const [startTime, setStartTime] = React.useState<DateTime | null>();
+  const [endDate, setEndDate] = React.useState<DateTime | null>(selectedDate);
+  const [endTime, setEndTime] = React.useState<DateTime | null>();
+  const [remindTime, setRemindTime] = React.useState("");
   const [color, setColor] = React.useState<string>("#ff0000");
   const [isRecurring, setIsRecurring] = React.useState(false);
+  const [isEndless, setIsEndless] = React.useState(false);
   const [chosenRecurringDays, setChosenRecurringDays] = React.useState<
     string[]
   >([]);
-  const [chosenEvent, setChosenEvent] = React.useState("");
+  const [chosenEvent, setChosenEvent] = React.useState("Work/School");
+  const [rruleDescription, setRruleDescription] = React.useState("");
+
+  React.useEffect(() => {
+    //Run whenever there is a change to the date:
+    setStartDate(selectedDate);
+    setEndDate(selectedDate);
+  }, [selectedDate]);
+
+  //The update code (will take into account both edit and new)
+  function handleNewUpdateEvent() {
+    if (handleUpdateMode === EUpdateMode.NEW) {
+      console.log('new')
+      //We assume it's a new event
+      let eventStruc = handleSetEvents(
+        updatedIDIfNew,
+        title,
+        description,
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        remindTime,
+        chosenEvent,
+        color,
+        isRecurring,
+        chosenRecurringDays,
+        rruleDescription
+      );
+      let copEvents = [...eventArray];
+      copEvents.push(eventStruc);
+      handleLoadEvent(copEvents);
+      handleGlobalID(updatedIDIfNew);
+      console.log(eventArray);
+      updateScheduleFile(copEvents);
+
+    } else if (handleUpdateMode === EUpdateMode.UPDATE) {
+
+      console.log('update')
+
+      if (updateExistingID === undefined){
+        console.log('existing id does not exist for some reason!?')
+        return false
+      }
+
+      let eventStruc = handleSetEvents(
+        updateExistingID,
+        title,
+        description,
+        startDate,
+        endDate,
+        startTime,
+        endTime,
+        remindTime,
+        chosenEvent,
+        color,
+        isRecurring,
+        chosenRecurringDays,
+        rruleDescription
+      );
+
+      let copEvents = [...eventArray]
+      let eventTargetIndex = copEvents.findIndex(({ id }: { id: string }) => id === String(updateExistingID))
+      copEvents[eventTargetIndex] = eventStruc
+      handleLoadEvent(copEvents);
+      console.log(eventArray);
+      updateScheduleFile(copEvents);
+    }
+  }
 
   const handleChangeInDays = (
     event: SelectChangeEvent<typeof chosenRecurringDays>
@@ -79,6 +179,97 @@ function SetEvent(props: IProps) {
     //ADD COLOR
   };
 
+  //When Starting up the SetEvent screen
+  React.useEffect(() => {
+    //If there is any changes to the id, find the ID if it's not undefined
+
+    if (handleUpdateMode === EUpdateMode.UPDATE) {
+      if (updateExistingID !== undefined) {
+        let foundEvent = eventArray.find(
+          ({ id }: { id: string }) => id === String(updateExistingID)
+        );
+        if (foundEvent["recurringEvent"] === true) {
+          if ("rrule" in foundEvent) {
+            //RRULE EXIST
+            setTitle(foundEvent["title"]);
+            setStartTime(DateTime.fromISO(foundEvent["start"]));
+            setEndTime(DateTime.fromISO(foundEvent["end"]));
+            setColor(foundEvent["backgroundColor"]);
+            setDescription(foundEvent["description"]);
+            setIsRecurring(foundEvent["recurringEvent"]);
+            setRemindTime(foundEvent["remindTime"]);
+            setChosenEvent(foundEvent["eventCategory"]);
+            setRruleDescription(foundEvent["rrule"]);
+            setChosenRecurringDays([])
+          } else {
+
+            //For remapping the days back
+            console.log(startDate);
+            console.log(startTime);
+          
+            const mapDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+            setTitle(foundEvent["title"]);
+            setStartDate(DateTime.fromISO(foundEvent["startRecur"]));
+            setStartTime(DateTime.fromISO(foundEvent["startTime"]));
+            setEndTime(DateTime.fromISO(foundEvent["endTime"]));
+            setColor(foundEvent["backgroundColor"]);
+            setDescription(foundEvent["description"]);
+            setIsRecurring(foundEvent["recurringEvent"]);
+            setChosenRecurringDays(foundEvent['daysOfWeek'].map((x:number) => mapDays[x - 1]))
+            setRemindTime(foundEvent["remindTime"]);
+            setChosenEvent(foundEvent["eventCategory"]);
+          }
+        } else {
+          //If false, that means it's a normal event
+          setTitle(foundEvent["title"]);
+          setStartDate(DateTime.fromISO(foundEvent["start"]));
+          setStartTime(DateTime.fromISO(foundEvent["start"]));
+          setEndDate(DateTime.fromISO(foundEvent["end"]));
+          setEndTime(DateTime.fromISO(foundEvent["end"]));
+          setColor(foundEvent["backgroundColor"]);
+          setDescription(foundEvent["description"]);
+          setIsRecurring(foundEvent["recurringEvent"]);
+          setRemindTime(foundEvent["remindTime"]);
+          setChosenEvent(foundEvent["eventCategory"]);
+          setRruleDescription('');
+          setChosenRecurringDays([])
+        }
+      }
+    } else if (handleUpdateMode === EUpdateMode.NEW) {
+      //Clear everything, except time
+      setTitle("");
+      setStartDate(selectedDate);
+      setStartTime(selectedDate);
+      setEndDate(selectedDate);
+      setEndTime(selectedDate);
+      setDescription("");
+      setIsRecurring(false);
+      setIsEndless(false);
+      setRemindTime("");
+      setChosenEvent("Work/School");
+      setChosenRecurringDays([]);
+      setRruleDescription("");
+    }
+  }, [handleUpdateMode, updateExistingID]);
+
+  //Update schedule file
+
+  const updateScheduleFile = (eventCop: any) => {
+    let finalFormatEventArray = JSON.stringify({
+      schedule: eventCop,
+    });
+    window.ipcRenderer
+      .invoke(ESchedulerIpcListener.UPDATE_SCHEDULE_FILE, finalFormatEventArray)
+      .then((result: boolean) => {
+        if (result === false) {
+          console.log("update failed");
+        } else {
+          console.log("update success");
+        }
+      });
+  };
+
   const daysOfWeek = [
     "Sunday",
     "Monday",
@@ -94,7 +285,7 @@ function SetEvent(props: IProps) {
   return (
     <Dialog
       fullScreen={responsiveMediaQuery}
-      sx={{ "& .MuiDialog-paper": { width: "80%", height: "55%" } }}
+      // sx={{ "& .MuiDialog-paper": { width: "100%", height: "70%" } }}
       open={visible}
       onClose={setCloseDialog}
       aria-labelledby="responsive-dialog-title"
@@ -114,7 +305,6 @@ function SetEvent(props: IProps) {
               value={title}
               onChange={(e) => setTitle(e.currentTarget.value)}
               label="Title"
-              defaultValue=""
             />
           </Grid>
           <Grid item xs={12}>
@@ -125,7 +315,6 @@ function SetEvent(props: IProps) {
               value={description}
               onChange={(e) => setDescription(e.currentTarget.value)}
               label="Description"
-              defaultValue=""
             />
           </Grid>
           <Grid item xs={6}>
@@ -173,6 +362,16 @@ function SetEvent(props: IProps) {
               />
             </LocalizationProvider>
           </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="reminder-textfield"
+              label="Remind me in (H)"
+              type="number"
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              value={remindTime}
+              onChange={(e) => setRemindTime(e.currentTarget.value)}
+            />
+          </Grid>
           <Grid item xs={6}>
             <FormControl fullWidth>
               <InputLabel id="chosen-event-label-id">Event Category</InputLabel>
@@ -194,10 +393,13 @@ function SetEvent(props: IProps) {
           <Grid item xs={6}>
             <PopoverColorPicker color={color} onChange={setColor} />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             <DialogContentText>Recurring event?</DialogContentText>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6}>
+            <DialogContentText>Endlessly Recurring?</DialogContentText>
+          </Grid>
+          <Grid item xs={6}>
             <ToggleButton
               color="success"
               value="check"
@@ -209,9 +411,21 @@ function SetEvent(props: IProps) {
               <CheckIcon />
             </ToggleButton>
           </Grid>
+          <Grid item xs={6}>
+            <ToggleButton
+              color="success"
+              value="check"
+              selected={isEndless}
+              onChange={() => {
+                setIsEndless(!isEndless);
+              }}
+            >
+              <CheckIcon />
+            </ToggleButton>
+          </Grid>
           {/* This is the choosing of day */}
           <Grid item xs={12}>
-            <FormControl sx={{ m: 1 }} fullWidth disabled={!isRecurring}>
+            <FormControl fullWidth disabled={!isRecurring}>
               <InputLabel id="days-recurring-label-id">
                 Days of Week to Recur
               </InputLabel>
@@ -243,11 +457,23 @@ function SetEvent(props: IProps) {
               </Select>
             </FormControl>
           </Grid>
+          <Grid item xs={12}>
+            <TextField
+              disabled={!isRecurring}
+              id="rrule-description"
+              fullWidth
+              multiline
+              value={rruleDescription}
+              onChange={(e) => setRruleDescription(e.currentTarget.value)}
+              label="RRules Description"
+              helperText="Refer to https://fafruch.github.io/react-rrule-generator/ for info. Will overwrite ALL the above settings EXCEPT start time and end time if this field is provided."
+            />
+          </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={setCloseDialog}>Close</Button>
-        <Button>Set Event</Button>
+        <Button onClick={handleNewUpdateEvent}>Set Event</Button>
       </DialogActions>
     </Dialog>
   );

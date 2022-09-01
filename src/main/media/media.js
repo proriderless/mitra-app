@@ -3,6 +3,8 @@ const nodePath = require("path");
 const electronDialog = require("electron").dialog;
 const electronIpcMain = require("electron").ipcMain;
 
+const preloadIPCID = ['dialog:openMediaFile', 'dialog:openMediaDirectorySelect']
+
 function checkIfFileContainsExtension(validExtension, str) {
   return validExtension.some((substring) => str.endsWith(substring));
 }
@@ -128,4 +130,4 @@ const openImageDirectorySelect = electronIpcMain.handle(
   }
 );
 
-module.exports = { openImageDirectorySelect, openVideoSelect };
+module.exports = { openImageDirectorySelect, openVideoSelect, preloadIPCID };

@@ -8,6 +8,8 @@ const ffmpeg = require("fluent-ffmpeg");
 const { captureRejections } = require("stream");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 
+const preloadIPCID = ['video:getSubtitles', 'codec:transformVideo']
+
 function isNullOrUndefinedOrEmptyString(s) {
   return !!s === false;
 }
@@ -200,4 +202,4 @@ const ffmpegCodecStream = electronIpcMain.handle(
   }
 );
 
-module.exports = { ffmpegCodecStream, retrieveSubtitle };
+module.exports = { ffmpegCodecStream, retrieveSubtitle, preloadIPCID };

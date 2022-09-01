@@ -28,3 +28,14 @@ export enum EIpcListener {
     RETRIEVE_SUBTITLES = "video:getSubtitles",
     STARTUP_FOLDER = "folder:openStartupFolder",
 }
+
+export enum ESchedulerIpcListener {
+    UPDATE_SCHEDULE_FILE = 'update:scheduleFile',
+    RETRIEVE_SCHEDULE_FILE = 'retrieve:scheduleFile'
+}
+
+export enum EUpdateMode {
+    UPDATE = 'update',
+    NEW = 'new',
+    DELETE = 'delete'
+  }

@@ -8,6 +8,9 @@ const electronIpcMain = require("electron").ipcMain;
 const mainFilePath = nodeElectron.app.getAppPath('appData')
 const settingDirectory = mainFilePath + "\\mitra\\settings"
 
+//IPC handle
+const preloadIPCID = ['folder:openStartupFolder']
+
 //Get the software main folder
 function createSettingsFolder() {
 
@@ -76,5 +79,5 @@ const openStartupFolder = electronIpcMain.handle(
       
     })
 
-module.exports = { runAllStartupFile, openStartupFolder };
+module.exports = { runAllStartupFile, openStartupFolder, preloadIPCID };
 
