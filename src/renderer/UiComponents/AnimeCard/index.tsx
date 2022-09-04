@@ -16,7 +16,7 @@ interface IProps {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "30%",
-    [theme.breakpoints.down("md")]: {
+    [theme.breakpoints.down("lg")]: {
       width: "47%",
     },
     [theme.breakpoints.down("sm")]: {

@@ -30,6 +30,8 @@ import {
 } from "../../Utils/enums";
 import { TabPageContext } from "../../Provider";
 
+/// ADDD EDITORJS for note-taking! ///
+
 declare global {
   interface Window {
     ipcRenderer: any;

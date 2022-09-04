@@ -34,8 +34,12 @@ export enum ESchedulerIpcListener {
     RETRIEVE_SCHEDULE_FILE = 'retrieve:scheduleFile'
 }
 
+export enum EMiscIpcListener {
+    OPEN_EXTERNAL_LINK = 'misc:OpenExternalLink'
+}
+
 export enum EUpdateMode {
     UPDATE = 'update',
     NEW = 'new',
     DELETE = 'delete'
-  }
+}

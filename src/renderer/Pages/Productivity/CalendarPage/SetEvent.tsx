@@ -26,7 +26,7 @@ import { ESchedulerIpcListener, EUpdateMode } from "../../../Utils/enums";
 
 import PopoverColorPicker from "../../../UiComponents/ColorPicker/index";
 
-import { handleSetEvents } from "./utils";
+import { handleSetEvents, updateScheduleFile } from "./utils";
 
 declare global {
   interface Window {
@@ -73,8 +73,6 @@ function SetEvent(props: IProps) {
     handleUpdateMode,
   } = props;
 
-  //TRY DEEP IMPORTING EVENTARRAY!
-  const selectedDateObj = DateTime.now();
   const updatedIDIfNew = globalID + 1;
 
   //Form props items to hold
@@ -105,7 +103,7 @@ function SetEvent(props: IProps) {
   //The update code (will take into account both edit and new)
   function handleNewUpdateEvent() {
     if (handleUpdateMode === EUpdateMode.NEW) {
-      console.log('new')
+      console.log("new");
       //We assume it's a new event
       let eventStruc = handleSetEvents(
         updatedIDIfNew,
@@ -128,14 +126,12 @@ function SetEvent(props: IProps) {
       handleGlobalID(updatedIDIfNew);
       console.log(eventArray);
       updateScheduleFile(copEvents);
-
     } else if (handleUpdateMode === EUpdateMode.UPDATE) {
+      console.log("update");
 
-      console.log('update')
-
-      if (updateExistingID === undefined){
-        console.log('existing id does not exist for some reason!?')
-        return false
+      if (updateExistingID === undefined) {
+        console.log("existing id does not exist for some reason!?");
+        return false;
       }
 
       let eventStruc = handleSetEvents(
@@ -154,13 +150,16 @@ function SetEvent(props: IProps) {
         rruleDescription
       );
 
-      let copEvents = [...eventArray]
-      let eventTargetIndex = copEvents.findIndex(({ id }: { id: string }) => id === String(updateExistingID))
-      copEvents[eventTargetIndex] = eventStruc
+      let copEvents = [...eventArray];
+      let eventTargetIndex = copEvents.findIndex(
+        ({ id }: { id: string }) => id === String(updateExistingID)
+      );
+      copEvents[eventTargetIndex] = eventStruc;
       handleLoadEvent(copEvents);
       console.log(eventArray);
       updateScheduleFile(copEvents);
     }
+    setCloseDialog();
   }
 
   const handleChangeInDays = (
@@ -192,22 +191,29 @@ function SetEvent(props: IProps) {
           if ("rrule" in foundEvent) {
             //RRULE EXIST
             setTitle(foundEvent["title"]);
-            setStartTime(DateTime.fromISO(foundEvent["start"]));
-            setEndTime(DateTime.fromISO(foundEvent["end"]));
+            setStartTime(DateTime.fromISO(foundEvent["startTime"]));
+            setEndTime(DateTime.fromISO(foundEvent["endTime"]));
             setColor(foundEvent["backgroundColor"]);
             setDescription(foundEvent["description"]);
             setIsRecurring(foundEvent["recurringEvent"]);
             setRemindTime(foundEvent["remindTime"]);
             setChosenEvent(foundEvent["eventCategory"]);
             setRruleDescription(foundEvent["rrule"]);
-            setChosenRecurringDays([])
+            setChosenRecurringDays([]);
           } else {
-
             //For remapping the days back
             console.log(startDate);
             console.log(startTime);
-          
-            const mapDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+            const mapDays = [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday",
+            ];
 
             setTitle(foundEvent["title"]);
             setStartDate(DateTime.fromISO(foundEvent["startRecur"]));
@@ -216,9 +222,12 @@ function SetEvent(props: IProps) {
             setColor(foundEvent["backgroundColor"]);
             setDescription(foundEvent["description"]);
             setIsRecurring(foundEvent["recurringEvent"]);
-            setChosenRecurringDays(foundEvent['daysOfWeek'].map((x:number) => mapDays[x - 1]))
+            setChosenRecurringDays(
+              foundEvent["daysOfWeek"].map((x: number) => mapDays[x - 1])
+            );
             setRemindTime(foundEvent["remindTime"]);
             setChosenEvent(foundEvent["eventCategory"]);
+            setRruleDescription("");
           }
         } else {
           //If false, that means it's a normal event
@@ -232,8 +241,8 @@ function SetEvent(props: IProps) {
           setIsRecurring(foundEvent["recurringEvent"]);
           setRemindTime(foundEvent["remindTime"]);
           setChosenEvent(foundEvent["eventCategory"]);
-          setRruleDescription('');
-          setChosenRecurringDays([])
+          setRruleDescription("");
+          setChosenRecurringDays([]);
         }
       }
     } else if (handleUpdateMode === EUpdateMode.NEW) {
@@ -255,20 +264,20 @@ function SetEvent(props: IProps) {
 
   //Update schedule file
 
-  const updateScheduleFile = (eventCop: any) => {
-    let finalFormatEventArray = JSON.stringify({
-      schedule: eventCop,
-    });
-    window.ipcRenderer
-      .invoke(ESchedulerIpcListener.UPDATE_SCHEDULE_FILE, finalFormatEventArray)
-      .then((result: boolean) => {
-        if (result === false) {
-          console.log("update failed");
-        } else {
-          console.log("update success");
-        }
-      });
-  };
+  // const updateScheduleFile = (eventCop: any) => {
+  //   let finalFormatEventArray = JSON.stringify({
+  //     schedule: eventCop,
+  //   });
+  //   window.ipcRenderer
+  //     .invoke(ESchedulerIpcListener.UPDATE_SCHEDULE_FILE, finalFormatEventArray)
+  //     .then((result: boolean) => {
+  //       if (result === false) {
+  //         console.log("update failed");
+  //       } else {
+  //         console.log("update success");
+  //       }
+  //     });
+  // };
 
   const daysOfWeek = [
     "Sunday",

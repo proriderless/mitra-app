@@ -10,10 +10,14 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { DateTime } from "luxon";
 import { ESchedulerIpcListener, EUpdateMode } from "../../../Utils/enums";
+import rrulePlugin from '@fullcalendar/rrule'
+import PromptDialog from "../../../UiComponents/PromptDialog";
 
 //import css
 import "@fullcalendar/daygrid/main.css";
 import "@fullcalendar/timegrid/main.css";
+
+import { handleDeleteEvent, updateScheduleFile } from "./utils";
 
 declare global {
   interface Window {
@@ -24,12 +28,17 @@ declare global {
 function CalendarPage() {
   const calendarRef = React.useRef<any>();
   const [loadEvents, setLoadEvents] = React.useState<any>([]);
-  const [openDialog, setOpenDialog] = React.useState(false);
+  const [openSetEventDialog, setOpenSetEventDialog] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState<DateTime>(DateTime.now());
   const [globalIDState, setGlobalIDState] = React.useState<number>(1);
   const [reloadCalendar, setReloadCalendar] = React.useState(true);
   const [existingID, setExistingID] = React.useState<number>()
   const [updateMode, setUpdateMode] = React.useState<EUpdateMode>(EUpdateMode.NEW)
+
+  //Prompt Dialog Stuff
+  const [openPromptDialog, setOpenPromptDialog] = React.useState(false)
+  const [eventTitle, setEventTitle] = React.useState('')
+  const [eventDesc, setEventDesc] = React.useState('')
 
   function retrieveScheduleFile() {
     window.ipcRenderer
@@ -49,12 +58,35 @@ function CalendarPage() {
       });
   }
 
+  function removeLoadEvents(id:string) {
+    let copArr = handleDeleteEvent(id, loadEvents)
+    setLoadEvents(copArr)
+    updateScheduleFile(copArr)
+  }
+
   //Handle event click callback
   function handleEventClickCallBack(info:any) {
     info.jsEvent.preventDefault()
+    console.log(info.event)
     setExistingID(info.event.id)
+    setEventTitle(`Event: ${info.event.title}`)
+    setEventDesc(`${info.event.extendedProps.description}`)
+    setOpenPromptDialog(true)
+  }
+
+  function handlePromptUpdate(){
     setUpdateMode(EUpdateMode.UPDATE)
-    handleDialogOpen()
+    handleSetEventDialogOpen()
+    setOpenPromptDialog(false)
+  }
+
+  function handlePromptDelete() {
+    removeLoadEvents(String(existingID))
+    setOpenPromptDialog(false)
+  }
+
+  function handlePromptClose() {
+    setOpenPromptDialog(false)
   }
 
   React.useEffect(() => {
@@ -67,12 +99,12 @@ function CalendarPage() {
     console.log("run once");
   }, []);
 
-  const handleDialogOpen = () => {
-    setOpenDialog(true);
+  const handleSetEventDialogOpen = () => {
+    setOpenSetEventDialog(true);
   };
 
-  const handleDialogClose = () => {
-    setOpenDialog(false);
+  const handleSetEventDialogClose = () => {
+    setOpenSetEventDialog(false);
   };
 
   const theme = useTheme();
@@ -98,7 +130,7 @@ function CalendarPage() {
     let copDateClickInfo = { ...dateClickInfo };
     setSelectedDate(DateTime.fromISO(copDateClickInfo.dateStr));
     setUpdateMode(EUpdateMode.NEW)
-    setOpenDialog(!openDialog);
+    setOpenSetEventDialog(!openSetEventDialog);
   }
 
   return (
@@ -119,6 +151,7 @@ function CalendarPage() {
             timeGridPlugin,
             listPlugin,
             interactionPlugin,
+            rrulePlugin,
           ]}
           eventClick={handleEventClickCallBack}
           events={loadEvents}
@@ -131,11 +164,23 @@ function CalendarPage() {
         />
       )}
 
+      {/* Dialog to prompt either update/delete the event */}
+      <PromptDialog
+        promptDialogVisible={openPromptDialog}
+        closeOnlyFunc={handlePromptClose}
+        title={eventTitle}
+        content={eventDesc}
+        acceptFunc={handlePromptUpdate}
+        acceptText={'Update Event'}
+        notAcceptFunc={handlePromptDelete}
+        notAcceptText={'Delete Event'}
+      />
+
       <SetEvent
-        visible={openDialog}
+        visible={openSetEventDialog}
         selectedDate={selectedDate}
-        setOpenDialog={handleDialogOpen}
-        setCloseDialog={handleDialogClose}
+        setOpenDialog={handleSetEventDialogOpen}
+        setCloseDialog={handleSetEventDialogClose}
         responsiveMediaQuery={fullScreen}
         eventArray={loadEvents}
         handleLoadEvent={setLoadEvents}

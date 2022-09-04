@@ -1,5 +1,12 @@
 //This file is specifically for handling the setting of events
 import { DateTime } from "luxon";
+import { ESchedulerIpcListener } from "../../../Utils/enums";
+
+declare global {
+  interface Window {
+    ipcRenderer: any;
+  }
+}
 
 // function convertDateToString(date:Date | null) {
 //   if (date === null){
@@ -33,32 +40,60 @@ function convertDateTimeObjectToDuration(time: DateTime | null | undefined) {
   }
 }
 
-function handleDeleteEvent() {}
-
-export function handleUpdateEvent(
-  id: number,
-  title: string,
-  description: string,
-  startDate: DateTime | null,
-  endDate: DateTime | null,
-  startTime: DateTime | null | undefined,
-  endTime: DateTime | null | undefined,
-  remindTime: string,
-  eventCategory: string,
-  backgroundColor: string,
-  recurringEvent: boolean,
-  daysOfWeek: Array<string>,
-  rrulesDesc: string,
-  eventArray: Array<any>
-) {
-  //find the event index
-  let deepCopEventArray = [...eventArray]
-  let eventTarget = deepCopEventArray.findIndex(({ foundid }: { foundid: string }) => foundid === String(id))
-  
-  //The same checks apply
-  deepCopEventArray[eventTarget] = handleSetEvents(id, title, description, startDate, endDate, startTime, endTime, remindTime, eventCategory, backgroundColor, recurringEvent, daysOfWeek, rrulesDesc)
-
+function removeItem<T>(arr: Array<T>, value: number): Array<T> { 
+  if (value > -1) {
+    arr.splice(value, 1);
+  }
+  return arr;
 }
+
+export const updateScheduleFile = (eventCop: any) => {
+  let finalFormatEventArray = JSON.stringify({
+    schedule: eventCop,
+  });
+  window.ipcRenderer
+    .invoke(ESchedulerIpcListener.UPDATE_SCHEDULE_FILE, finalFormatEventArray)
+    .then((result: boolean) => {
+      if (result === false) {
+        console.log("update failed");
+      } else {
+        console.log("update success");
+      }
+    });
+};
+
+
+export function handleDeleteEvent(delete_id:string, eventArray:Array<any>) {
+  let deepCopEventArray = [...eventArray]
+  let eventTarget = deepCopEventArray.findIndex(({ id }: { id: string }) => id === delete_id)
+  let newRemovedEventArr = removeItem(deepCopEventArray, eventTarget)
+  return newRemovedEventArr
+}
+
+// export function handleUpdateEvent(
+//   id: number,
+//   title: string,
+//   description: string,
+//   startDate: DateTime | null,
+//   endDate: DateTime | null,
+//   startTime: DateTime | null | undefined,
+//   endTime: DateTime | null | undefined,
+//   remindTime: string,
+//   eventCategory: string,
+//   backgroundColor: string,
+//   recurringEvent: boolean,
+//   daysOfWeek: Array<string>,
+//   rrulesDesc: string,
+//   eventArray: Array<any>
+// ) {
+//   //find the event index
+//   let deepCopEventArray = [...eventArray]
+//   let eventTarget = deepCopEventArray.findIndex(({ foundid }: { foundid: string }) => foundid === String(id))
+  
+//   //The same checks apply
+//   deepCopEventArray[eventTarget] = handleSetEvents(id, title, description, startDate, endDate, startTime, endTime, remindTime, eventCategory, backgroundColor, recurringEvent, daysOfWeek, rrulesDesc)
+
+//}
 
 export function handleSetEvents(
   id: number,
@@ -151,8 +186,8 @@ export function handleSetEvents(
       let eventStruct = {
         id: String(id),
         title: title,
-        startTime: startTime,
-        endTime: endTime,
+        startTime: convertDateTimeObjectToDuration(startTime),
+        endTime: convertDateTimeObjectToDuration(endTime),
         backgroundColor: backgroundColor,
         borderColor: backgroundColor,
         rrule: rrulesDesc,

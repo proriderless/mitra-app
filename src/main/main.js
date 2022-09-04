@@ -89,3 +89,6 @@ subtitles.retrieveSubtitle;
 const scheduler = require("./scheduler/scheduler")
 scheduler.updateScheduleFile
 scheduler.retrieveScheduleFile
+
+const misc = require("./misc/misc")
+misc.openExternalLink
