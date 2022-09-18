@@ -52,7 +52,11 @@
     "zero-fill": "^2.2.4"
   },
   "main": "./src/main/main.js",
-  "files": [ "dist", "README.md", "src/**" ],
+  "files": [
+    "dist",
+    "README.md",
+    "src/**"
+  ],
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

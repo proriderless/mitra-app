@@ -39,7 +39,7 @@ function PopoverColorPicker({ color, onChange }: PopPicker) {
             onClick={() => toggle(true)}
           ></div>
           {isOpen && (
-            <div className="popover" ref={popover} style={{position:'fixed', zIndex:'5'}}>
+            <div className="popover" ref={popover} style={{position:'static', zIndex:'5'}}>
               <HexColorPicker color={color} onChange={onChange} />
             </div>
           )}

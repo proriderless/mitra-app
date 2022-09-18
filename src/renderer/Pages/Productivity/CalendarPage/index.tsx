@@ -9,9 +9,11 @@ import SetEvent from "./SetEvent";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { DateTime } from "luxon";
-import { ESchedulerIpcListener, EUpdateMode } from "../../../Utils/enums";
+import { ESchedulerIpcListener, EUpdateMode, EAlertType } from "../../../Utils/enums";
 import rrulePlugin from '@fullcalendar/rrule'
 import PromptDialog from "../../../UiComponents/PromptDialog";
+import axios from "axios";
+import AlertCard from '../../../UiComponents/AlertCard'
 
 //import css
 import "@fullcalendar/daygrid/main.css";
@@ -40,6 +42,11 @@ function CalendarPage() {
   const [eventTitle, setEventTitle] = React.useState('')
   const [eventDesc, setEventDesc] = React.useState('')
 
+  //ALERT
+  const [alertMode, setAlertMode] = React.useState(EAlertType.SUCCESS)
+  const [alertText, setAlertText] = React.useState('')
+  const [alertOn, setAlertOn] = React.useState(false)
+
   function retrieveScheduleFile() {
     window.ipcRenderer
       .invoke(ESchedulerIpcListener.RETRIEVE_SCHEDULE_FILE)
@@ -58,8 +65,28 @@ function CalendarPage() {
       });
   }
 
+  function updateLocalFileToServer() {
+      const syncFileToServerURL =  "http://localhost:10100/api/v1/sync_local_file"
+      console.log(loadEvents)
+      let eventJSON = JSON.stringify(loadEvents)
+      axios.post(syncFileToServerURL, {calendarObject: eventJSON},)
+      .then(function (response) {
+        console.log(response)
+        setAlertOn(true)
+        setAlertMode(EAlertType.SUCCESS)
+        setAlertText('Update is successful')
+      })
+      .catch(function (error) {
+        console.log(error)
+        setAlertOn(true)
+        setAlertMode(EAlertType.ERROR)
+        setAlertText('Update has failed, check console.log')
+      })
+  }
+
   function removeLoadEvents(id:string) {
     let copArr = handleDeleteEvent(id, loadEvents)
+    
     setLoadEvents(copArr)
     updateScheduleFile(copArr)
   }
@@ -138,6 +165,12 @@ function CalendarPage() {
       <Button variant="contained" onClick={updateCalendarSize}>
         Show Folder
       </Button>
+
+      <Button variant="contained" onClick={updateLocalFileToServer}>
+        Sync file to server
+      </Button>
+
+      <AlertCard alertMode={alertMode} alertText={alertText} alertClose={alertOn} alertCloseFunc={setAlertOn} />
 
       {!reloadCalendar && (
         <FullCalendar

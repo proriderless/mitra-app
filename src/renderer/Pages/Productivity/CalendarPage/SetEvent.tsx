@@ -22,7 +22,7 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import CheckIcon from "@mui/icons-material/Check";
 import ToggleButton from "@mui/material/ToggleButton";
-import { ESchedulerIpcListener, EUpdateMode } from "../../../Utils/enums";
+import { ESchedulerIpcListener, EUpdateMode, EMiscIpcListener } from "../../../Utils/enums";
 
 import PopoverColorPicker from "../../../UiComponents/ColorPicker/index";
 
@@ -54,6 +54,15 @@ interface IFormComponents {
   startTime: string | undefined;
   endDate: Date | undefined;
   endTime: string | undefined;
+}
+
+//For opening external link
+function openExternalLink(link: string) {
+  window.ipcRenderer
+    .invoke(EMiscIpcListener.OPEN_EXTERNAL_LINK, link)
+    .then((result: boolean | string) => {
+      console.log("open success");
+    });
 }
 
 //updateExistingID ID is used if in update mode
@@ -93,6 +102,8 @@ function SetEvent(props: IProps) {
   >([]);
   const [chosenEvent, setChosenEvent] = React.useState("Work/School");
   const [rruleDescription, setRruleDescription] = React.useState("");
+  const [rruleDurationH, setRruleDurationH] = React.useState("");
+  const [rruleDurationM, setRruleDurationM] = React.useState("");
 
   React.useEffect(() => {
     //Run whenever there is a change to the date:
@@ -118,7 +129,9 @@ function SetEvent(props: IProps) {
         color,
         isRecurring,
         chosenRecurringDays,
-        rruleDescription
+        rruleDescription,
+        rruleDurationH,
+        rruleDurationM
       );
       let copEvents = [...eventArray];
       copEvents.push(eventStruc);
@@ -147,7 +160,9 @@ function SetEvent(props: IProps) {
         color,
         isRecurring,
         chosenRecurringDays,
-        rruleDescription
+        rruleDescription,
+        rruleDurationH,
+        rruleDurationM
       );
 
       let copEvents = [...eventArray];
@@ -189,6 +204,8 @@ function SetEvent(props: IProps) {
         );
         if (foundEvent["recurringEvent"] === true) {
           if ("rrule" in foundEvent) {
+            //SPLIT
+            let duration = foundEvent['duration'].split(":")
             //RRULE EXIST
             setTitle(foundEvent["title"]);
             setStartTime(DateTime.fromISO(foundEvent["startTime"]));
@@ -199,6 +216,8 @@ function SetEvent(props: IProps) {
             setRemindTime(foundEvent["remindTime"]);
             setChosenEvent(foundEvent["eventCategory"]);
             setRruleDescription(foundEvent["rrule"]);
+            setRruleDurationH(duration[0])
+            setRruleDurationM(duration[1])
             setChosenRecurringDays([]);
           } else {
             //For remapping the days back
@@ -206,13 +225,13 @@ function SetEvent(props: IProps) {
             console.log(startTime);
 
             const mapDays = [
+              "Sunday",
               "Monday",
               "Tuesday",
               "Wednesday",
               "Thursday",
               "Friday",
               "Saturday",
-              "Sunday",
             ];
 
             setTitle(foundEvent["title"]);
@@ -223,11 +242,13 @@ function SetEvent(props: IProps) {
             setDescription(foundEvent["description"]);
             setIsRecurring(foundEvent["recurringEvent"]);
             setChosenRecurringDays(
-              foundEvent["daysOfWeek"].map((x: number) => mapDays[x - 1])
+              foundEvent["daysOfWeek"].map((x: number) => mapDays[x]) //foundEvent["daysOfWeek"].map((x: number) => mapDays[x - 1])
             );
             setRemindTime(foundEvent["remindTime"]);
             setChosenEvent(foundEvent["eventCategory"]);
             setRruleDescription("");
+            setRruleDurationH("0")
+            setRruleDurationM("0")
           }
         } else {
           //If false, that means it's a normal event
@@ -241,6 +262,8 @@ function SetEvent(props: IProps) {
           setIsRecurring(foundEvent["recurringEvent"]);
           setRemindTime(foundEvent["remindTime"]);
           setChosenEvent(foundEvent["eventCategory"]);
+          setRruleDurationH("0")
+          setRruleDurationM("0")
           setRruleDescription("");
           setChosenRecurringDays([]);
         }
@@ -259,6 +282,8 @@ function SetEvent(props: IProps) {
       setChosenEvent("Work/School");
       setChosenRecurringDays([]);
       setRruleDescription("");
+      setRruleDurationH("0")
+      setRruleDurationM("0")
     }
   }, [handleUpdateMode, updateExistingID]);
 
@@ -290,6 +315,8 @@ function SetEvent(props: IProps) {
   ];
 
   const eventCategory = ["Work/School", "Event", "Shows"];
+
+  const rruleLink = "https://jakubroztocil.github.io/rrule/"
 
   return (
     <Dialog
@@ -467,6 +494,12 @@ function SetEvent(props: IProps) {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
+            <DialogContentText>All above time settings are irrelevant if you're using RRULE</DialogContentText> <Chip label="RRule" onClick={() => openExternalLink(rruleLink)} />
+          </Grid>
+          <Grid item xs={12}>
+            <DialogContentText>Specify duration as well if you want to specify how long it is</DialogContentText>
+          </Grid>
+          <Grid item xs={12}>
             <TextField
               disabled={!isRecurring}
               id="rrule-description"
@@ -475,7 +508,29 @@ function SetEvent(props: IProps) {
               value={rruleDescription}
               onChange={(e) => setRruleDescription(e.currentTarget.value)}
               label="RRules Description"
-              helperText="Refer to https://fafruch.github.io/react-rrule-generator/ for info. Will overwrite ALL the above settings EXCEPT start time and end time if this field is provided."
+              helperText=""
+            />
+          </Grid>
+          <Grid item xs={6}>
+          <TextField
+              id="rrule-duration-hour"
+              disabled={!isRecurring}
+              label="Duration (HH)"
+              type="number"
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              value={rruleDurationH}
+              onChange={(e) => setRruleDurationH(e.currentTarget.value)}
+            />
+          </Grid>
+          <Grid item xs={6}>
+          <TextField
+              id="rrule-duration-min"
+              disabled={!isRecurring}
+              label="Duration (MIN) - MM"
+              type="number"
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              value={rruleDurationM}
+              onChange={(e) => setRruleDurationM(e.currentTarget.value)}
             />
           </Grid>
         </Grid>

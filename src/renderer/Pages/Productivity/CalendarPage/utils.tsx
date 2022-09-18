@@ -55,9 +55,11 @@ export const updateScheduleFile = (eventCop: any) => {
     .invoke(ESchedulerIpcListener.UPDATE_SCHEDULE_FILE, finalFormatEventArray)
     .then((result: boolean) => {
       if (result === false) {
-        console.log("update failed");
+        console.log('update failed')
+        return false
       } else {
-        console.log("update success");
+        console.log('update success')
+        return true
       }
     });
 };
@@ -108,7 +110,9 @@ export function handleSetEvents(
   backgroundColor: string,
   recurringEvent: boolean,
   daysOfWeek: Array<string>,
-  rrulesDesc: string
+  rrulesDesc: string,
+  rruleDurationH: string,
+  rruleDurationM: string,
 ) {
   interface iMapDays {
     [key: string]: number;
@@ -118,13 +122,13 @@ export function handleSetEvents(
   console.log(startTime);
 
   const mapDays: iMapDays = {
+    Sunday: 0,
     Monday: 1,
     Tuesday: 2,
     Wednesday: 3,
-    Thurdays: 4,
+    Thursday: 4,
     Friday: 5,
-    Saturday: 6,
-    Sunday: 7,
+    Saturday: 6
   };
 
   //If recurring event is false, construct it normally
@@ -157,10 +161,14 @@ export function handleSetEvents(
         remappedDays.push(mapDays[days]);
       }
 
+      console.log(remappedDays)
       //sort in ascending order
       remappedDays.sort(function (a, b) {
         return a - b;
       });
+
+      console.log(remappedDays)
+
 
       //If user does check endless
       //Start day will still be specified regardless, as we do not want it to extend infinitely into the past
@@ -183,11 +191,20 @@ export function handleSetEvents(
       return eventStruct;
     } else {
       //If RRules IS present, overwrite over every option, except time.
+      //If either is absent
+
+      if (rruleDurationH == ""){
+        rruleDurationH = "0"
+      }
+      if (rruleDurationM == ""){
+        rruleDurationM = "0"
+      }
+
+      let durationItem = addLeadingZeros(parseInt(rruleDurationH), 2) + ":" + addLeadingZeros(parseInt(rruleDurationM), 2)
       let eventStruct = {
         id: String(id),
         title: title,
-        startTime: convertDateTimeObjectToDuration(startTime),
-        endTime: convertDateTimeObjectToDuration(endTime),
+        duration: durationItem,
         backgroundColor: backgroundColor,
         borderColor: backgroundColor,
         rrule: rrulesDesc,
@@ -199,4 +216,8 @@ export function handleSetEvents(
       return eventStruct;
     }
   }
+}
+
+function addLeadingZeros(num: number, totalLength:number) {
+  return String(num).padStart(totalLength, '0');
 }

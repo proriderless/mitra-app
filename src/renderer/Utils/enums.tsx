@@ -43,3 +43,10 @@ export enum EUpdateMode {
     NEW = 'new',
     DELETE = 'delete'
 }
+
+export enum EAlertType {
+    SUCCESS = 'success',
+    ERROR = 'error',
+    INFO = 'info',
+    WARNING = 'warning'
+}
