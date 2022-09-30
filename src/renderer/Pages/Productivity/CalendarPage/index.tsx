@@ -24,6 +24,7 @@ import { handleDeleteEvent, updateScheduleFile } from "./utils";
 declare global {
   interface Window {
     ipcRenderer: any;
+    envVars:any;
   }
 }
 
@@ -66,10 +67,14 @@ function CalendarPage() {
   }
 
   function updateLocalFileToServer() {
-      const syncFileToServerURL =  "http://localhost:10100/api/v1/sync_local_file"
-      console.log(loadEvents)
+      const syncFileToServerURL = `${window.envVars.SERVER_URL}/api/v1/sync_local_file`
+      let axiosConfig = {
+        headers: {
+          authorization: window.envVars.ACCESS_TOKEN
+        }
+      }
       let eventJSON = JSON.stringify(loadEvents)
-      axios.post(syncFileToServerURL, {calendarObject: eventJSON},)
+      axios.post(syncFileToServerURL, {calendarObject: eventJSON}, axiosConfig)
       .then(function (response) {
         console.log(response)
         setAlertOn(true)

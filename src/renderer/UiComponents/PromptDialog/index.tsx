@@ -8,7 +8,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import { EMiscIpcListener } from "../../Utils/enums";
-import { ReactElement } from "react";
 
 declare global {
   interface Window {
@@ -60,12 +59,16 @@ function PromptDialog(props: IProps) {
     let urlRegex =
       /(\b(https?|http|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
     let textArr = text.split(urlRegex);
-    console.log(textArr)
+    console.log(textArr);
     return textArr.map((str) => {
       if (urlRegex.test(str)) {
-        return (linkText(str))
-      } else if ((str.includes('http') == false && str !== 'file' && str !== 'ftp')) {
-        return str
+        return linkText(str);
+      } else if (
+        str.includes("http") == false &&
+        str !== "file" &&
+        str !== "ftp"
+      ) {
+        return str;
       }
     });
   }
