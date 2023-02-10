@@ -11,10 +11,28 @@ type PopPicker = {
 
 function PopoverColorPicker({ color, onChange }: PopPicker) {
   const popover = useRef() as React.MutableRefObject<HTMLInputElement>;
+  const swatch = useRef() as React.MutableRefObject<HTMLInputElement>;
   const [isOpen, toggle] = useState(false);
 
   const close = useCallback(() => toggle(false), []);
   useClickOutside(popover, close);
+
+  React.useEffect(() => {
+    const swatchRef = swatch.current;
+    const colorSwatch = popover.current;
+
+    window.addEventListener('scroll', () => {
+      colorSwatch.style.top = swatchRef.offsetTop - window.scrollY + 'px';
+    });
+
+    return () => {
+      window.removeEventListener('scroll', () => {
+        colorSwatch.style.top = swatchRef.offsetTop - window.scrollY + 'px';
+      });
+    };
+
+  }, []);
+
 
   return (
     <>
@@ -23,11 +41,12 @@ function PopoverColorPicker({ color, onChange }: PopPicker) {
         alignItems="center"
         spacing={2}
       >
-        <div className="picker">
+        <div className="picker" ref={swatch} style={{position: 'relative'}}>
           <div
             className="swatch"
             style={{
               backgroundColor: color,
+              position: 'relative',
               width: "20px",
               height: "20px",
               border: '3px',
@@ -39,7 +58,7 @@ function PopoverColorPicker({ color, onChange }: PopPicker) {
             onClick={() => toggle(true)}
           ></div>
           {isOpen && (
-            <div className="popover" ref={popover} style={{position:'static', zIndex:'5'}}>
+            <div className="popover" ref={popover} style={{position:'fixed', zIndex:'5'}}>
               <HexColorPicker color={color} onChange={onChange} />
             </div>
           )}

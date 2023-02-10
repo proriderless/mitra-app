@@ -166,7 +166,7 @@ function Explorer() {
             >
               <ArrowBackIcon />
             </IconButton>
-            <FormControl sx={{minWidth: '80px', width: '80%' }}>
+            <FormControl sx={{minWidth: '80px', width: '80%' }}>  
               <InputLabel id="change_directory_selection_label_id">
                 Directory
               </InputLabel>

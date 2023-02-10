@@ -1,9 +1,15 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain, protocol, Notification } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  protocol,
+  Notification,
+} = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
 const startupProcess = require("./startup/startup");
-const dotenv = require('dotenv').config()
+const dotenv = require("dotenv").config();
 
 // webPreferences: {
 //   preload: path.join(__dirname, preload.js),
@@ -37,11 +43,11 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-
+  app.removeAllListeners("ready");
   createWindow();
-  startupProcess.runAllStartupFile()
+  startupProcess.runAllStartupFile();
   //Set up ENV variable on MAIN side
-  dotenv
+  dotenv;
 
   app.on("activate", function () {
     // On macOS it's common to re-create a window in the app when the
@@ -73,22 +79,22 @@ app.on("window-all-closed", function () {
 // code. You can also put them in separate files and require them here.
 
 //Startup Folder
-startupProcess.openStartupFolder
+startupProcess.openStartupFolder;
 
 //For Getting images and directories!
 const image = require("./media/media");
 image.openImageDirectorySelect;
 image.absoluteImagePaths;
-image.openVideoSelect
+image.openVideoSelect;
 
-const subtitles = require("./subtitles/subtitles")
+const subtitles = require("./subtitles/subtitles");
 subtitles.ffmpegCodecStream;
 subtitles.retrieveSubtitle;
 
 //Local schedule file retrieval
-const scheduler = require("./scheduler/scheduler")
-scheduler.updateScheduleFile
-scheduler.retrieveScheduleFile
+const scheduler = require("./scheduler/scheduler");
+scheduler.updateScheduleFile;
+scheduler.retrieveScheduleFile;
 
-const misc = require("./misc/misc")
-misc.openExternalLink
+const misc = require("./misc/misc");
+misc.openExternalLink;

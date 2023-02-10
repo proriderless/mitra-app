@@ -40,7 +40,7 @@ function convertDateTimeObjectToDuration(time: DateTime | null | undefined) {
   }
 }
 
-function removeItem<T>(arr: Array<T>, value: number): Array<T> { 
+function removeItem<T>(arr: Array<T>, value: number): Array<T> {
   if (value > -1) {
     arr.splice(value, 1);
   }
@@ -55,21 +55,22 @@ export const updateScheduleFile = (eventCop: any) => {
     .invoke(ESchedulerIpcListener.UPDATE_SCHEDULE_FILE, finalFormatEventArray)
     .then((result: boolean) => {
       if (result === false) {
-        console.log('update failed')
-        return false
+        console.log("update failed");
+        return false;
       } else {
-        console.log('update success')
-        return true
+        console.log("update success");
+        return true;
       }
     });
 };
 
-
-export function handleDeleteEvent(delete_id:string, eventArray:Array<any>) {
-  let deepCopEventArray = [...eventArray]
-  let eventTarget = deepCopEventArray.findIndex(({ id }: { id: string }) => id === delete_id)
-  let newRemovedEventArr = removeItem(deepCopEventArray, eventTarget)
-  return newRemovedEventArr
+export function handleDeleteEvent(delete_id: string, eventArray: Array<any>) {
+  let deepCopEventArray = [...eventArray];
+  let eventTarget = deepCopEventArray.findIndex(
+    ({ id }: { id: string }) => id === delete_id
+  );
+  let newRemovedEventArr = removeItem(deepCopEventArray, eventTarget);
+  return newRemovedEventArr;
 }
 
 // export function handleUpdateEvent(
@@ -91,7 +92,7 @@ export function handleDeleteEvent(delete_id:string, eventArray:Array<any>) {
 //   //find the event index
 //   let deepCopEventArray = [...eventArray]
 //   let eventTarget = deepCopEventArray.findIndex(({ foundid }: { foundid: string }) => foundid === String(id))
-  
+
 //   //The same checks apply
 //   deepCopEventArray[eventTarget] = handleSetEvents(id, title, description, startDate, endDate, startTime, endTime, remindTime, eventCategory, backgroundColor, recurringEvent, daysOfWeek, rrulesDesc)
 
@@ -112,7 +113,7 @@ export function handleSetEvents(
   daysOfWeek: Array<string>,
   rrulesDesc: string,
   rruleDurationH: string,
-  rruleDurationM: string,
+  rruleDurationM: string
 ) {
   interface iMapDays {
     [key: string]: number;
@@ -128,7 +129,7 @@ export function handleSetEvents(
     Wednesday: 3,
     Thursday: 4,
     Friday: 5,
-    Saturday: 6
+    Saturday: 6,
   };
 
   //If recurring event is false, construct it normally
@@ -161,14 +162,13 @@ export function handleSetEvents(
         remappedDays.push(mapDays[days]);
       }
 
-      console.log(remappedDays)
+      console.log(remappedDays);
       //sort in ascending order
       remappedDays.sort(function (a, b) {
         return a - b;
       });
 
-      console.log(remappedDays)
-
+      console.log(remappedDays);
 
       //If user does check endless
       //Start day will still be specified regardless, as we do not want it to extend infinitely into the past
@@ -193,14 +193,17 @@ export function handleSetEvents(
       //If RRules IS present, overwrite over every option, except time.
       //If either is absent
 
-      if (rruleDurationH == ""){
-        rruleDurationH = "0"
+      if (rruleDurationH == "") {
+        rruleDurationH = "0";
       }
-      if (rruleDurationM == ""){
-        rruleDurationM = "0"
+      if (rruleDurationM == "") {
+        rruleDurationM = "0";
       }
 
-      let durationItem = addLeadingZeros(parseInt(rruleDurationH), 2) + ":" + addLeadingZeros(parseInt(rruleDurationM), 2)
+      let durationItem =
+        addLeadingZeros(parseInt(rruleDurationH), 2) +
+        ":" +
+        addLeadingZeros(parseInt(rruleDurationM), 2);
       let eventStruct = {
         id: String(id),
         title: title,
@@ -218,6 +221,6 @@ export function handleSetEvents(
   }
 }
 
-function addLeadingZeros(num: number, totalLength:number) {
-  return String(num).padStart(totalLength, '0');
+function addLeadingZeros(num: number, totalLength: number) {
+  return String(num).padStart(totalLength, "0");
 }
