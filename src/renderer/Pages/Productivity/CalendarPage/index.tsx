@@ -48,6 +48,25 @@ function CalendarPage() {
   const [alertText, setAlertText] = React.useState('')
   const [alertOn, setAlertOn] = React.useState(false)
 
+  function getFileFromDb(){
+    const syncFileFromDb = `${window.envVars.SERVER_URL}/api/v1/api/v1/get_schedule`
+    let axiosConfig = {
+      headers: {
+        authorization: window.envVars.ACCESS_TOKEN
+      }
+    }
+    axios.get(syncFileFromDb, axiosConfig)
+      .then(function (response) {
+        console.log(response)
+        let resultJSON = JSON.parse(response.data)
+        updateScheduleFile(resultJSON)
+        setAlertOn(true)
+        setAlertMode(EAlertType.SUCCESS)
+        setAlertText('Update is successful')
+      })
+
+  }
+
   function retrieveScheduleFile() {
     window.ipcRenderer
       .invoke(ESchedulerIpcListener.RETRIEVE_SCHEDULE_FILE)
