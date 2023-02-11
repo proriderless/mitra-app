@@ -49,7 +49,7 @@ function CalendarPage() {
   const [alertOn, setAlertOn] = React.useState(false)
 
   function getFileFromDb(){
-    const syncFileFromDb = `${window.envVars.SERVER_URL}/api/v1/api/v1/get_schedule`
+    const syncFileFromDb = `${window.envVars.SERVER_URL}/api/v1/get_schedule`
     let axiosConfig = {
       headers: {
         authorization: window.envVars.ACCESS_TOKEN
@@ -58,11 +58,24 @@ function CalendarPage() {
     axios.get(syncFileFromDb, axiosConfig)
       .then(function (response) {
         console.log(response)
-        let resultJSON = JSON.parse(response.data)
-        updateScheduleFile(resultJSON)
-        setAlertOn(true)
-        setAlertMode(EAlertType.SUCCESS)
-        setAlertText('Update is successful')
+        let resultJSON = response.data
+        for (let schedule of resultJSON) {
+             delete schedule["_id"];
+          
+       }
+       let updateFile = {schedule: resultJSON}
+       updateScheduleFile(resultJSON)
+       setAlertOn(true)
+       setAlertMode(EAlertType.SUCCESS)
+       setAlertText('Retrieve success!')
+
+        //Retrieve and reload
+       retrieveScheduleFile();
+       setReloadCalendar(false);
+        //updateCalendarSize();
+       setTimeout(updateCalendarSize, 500);
+       setTimeout(updateCalendarSize, 500);
+       console.log("run once");
       })
 
   }
@@ -192,6 +205,10 @@ function CalendarPage() {
 
       <Button variant="contained" onClick={updateLocalFileToServer}>
         Sync file to server
+      </Button>
+
+      <Button variant="contained" onClick={getFileFromDb}>
+        Load files from server
       </Button>
 
       <AlertCard alertMode={alertMode} alertText={alertText} alertClose={alertOn} alertCloseFunc={setAlertOn} />
