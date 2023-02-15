@@ -1,6 +1,6 @@
 # Mitra
 
-This is a personal app packed with features to do stuff... mostly to learn stuff and also to manage a semi-large project with some complexity
+This is a personal app packed with features to do stuff... mostly to learn stuff.
 Mainly to watch shows and anime streaming (via torrent), and also a calendar for scheduling.
 This app comes with a server backend component system that sends notifications via as well
 
