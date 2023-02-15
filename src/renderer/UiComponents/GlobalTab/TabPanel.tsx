@@ -1,7 +1,7 @@
-import * as React from 'react';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import { displayPartsToString } from 'typescript';
+import * as React from "react";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import { displayPartsToString } from "typescript";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -25,7 +25,6 @@ export function TabPanel(props: TabPanelProps) {
           <Typography>{children}</Typography>
         </Box>
       }
-      
     </div>
   );
 }
@@ -33,6 +32,6 @@ export function TabPanel(props: TabPanelProps) {
 export function allyProps(index: number) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }

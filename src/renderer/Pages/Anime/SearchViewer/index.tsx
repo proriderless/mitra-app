@@ -10,7 +10,23 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import AnimeCard from "../../../UiComponents/AnimeCard";
 import Axios from "axios";
 
+import Dialog from "@mui/material/Dialog";
+import Slide from "@mui/material/Slide";
+import { TransitionProps } from "@mui/material/transitions";
+import AnimeInfoViewer from "../AnimeInfoViewer";
+import DialogContent from "@mui/material/DialogContent";
+import { FloatingContainerView } from "../../../Utils/commonStyles";
+
 const apiEndpoint = "https://api.jikan.moe/v4";
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function SearchViewer() {
   const [searchAnime, setSearchAnime] = React.useState("");
@@ -18,6 +34,19 @@ function SearchViewer() {
   const [currentAnimePage, setCurrentAnimePage] = React.useState(1);
   const [maxAnimePages, setMaxAnimePages] = React.useState(1);
   const [sfwCheck, setSfwCheck] = React.useState(true);
+
+  const [openAnimeDialog, setOpenAnimeDialog] = React.useState(false);
+  const [selectedAnimeID, setSelectedAnimeID] = React.useState<string>("");
+
+  // const handleAnimeClickOpen = () => {
+  //   setOpenAnimeDialog(true);
+  //   console.log(openAnimeDialog)
+  //   console.log(selectedAnimeID)
+  // };
+
+  const handleAnimeClickClose = () => {
+    setOpenAnimeDialog(false);
+  };
 
   function searchAnimeOnClick() {
     const params = {
@@ -61,6 +90,26 @@ function SearchViewer() {
 
   return (
     <>
+      {/* DO NOT USE DIALOG!!!! */}
+      {/* {openAnimeDialog && ("test")} */}
+      {/* {openAnimeDialog && (
+        <FloatingContainerView zIndex="1000">
+          <AnimeInfoViewer
+            malId={selectedAnimeID}
+            handleClose={handleAnimeClickClose}
+          />
+        </FloatingContainerView>
+      )} */}
+      <Dialog
+        fullScreen
+        open={openAnimeDialog}
+        TransitionComponent={Transition}
+      >
+        <AnimeInfoViewer
+          malId={selectedAnimeID}
+          handleClose={setOpenAnimeDialog}
+        />
+      </Dialog>
       <TextField
         id="search-anime"
         label="Search"
@@ -106,7 +155,11 @@ function SearchViewer() {
       {/* Where the anime cards will go to, still need a top section to regulate pagination */}
       <Box sx={{ display: "flex", flexFlow: "wrap", padding: "5px" }}>
         {animeList?.map((obj, i) => (
-          <AnimeCard animeObj={obj} />
+          <AnimeCard
+            animeObj={obj}
+            setSelectedID={setSelectedAnimeID}
+            setOpenDialog={setOpenAnimeDialog}
+          />
         ))}
       </Box>
     </>

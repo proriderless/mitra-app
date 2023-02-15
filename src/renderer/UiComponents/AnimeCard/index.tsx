@@ -7,11 +7,15 @@ import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import { makeStyles } from "@material-ui/core/styles";
+import { CardActions } from "@mui/material";
+import Button from '@mui/material/Button';
 
 interface IProps {
   animeObj: {
     [key: string]: any;
   };
+  setOpenDialog: any; //function
+  setSelectedID: any;
 }
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function AnimeCard(props: IProps) {
-  const { animeObj } = props;
+  const { animeObj, setSelectedID, setOpenDialog } = props;
+  //const { animeObj } = props;
   const [summaryStats, setSummaryStats] = React.useState("");
   const [themesGenres, setThemesGenres] = React.useState<Array<string>>([""]);
   const classes = useStyles();
@@ -49,6 +54,13 @@ function AnimeCard(props: IProps) {
     airing,
     duration,
   } = animeObj;
+
+  function handleClickShowAnime(){
+    console.log('test')
+    setSelectedID(mal_id)
+    console.log(setOpenDialog)
+    setOpenDialog(true)
+  }
 
   React.useEffect(() => {
     //Set the summary stats
@@ -73,6 +85,8 @@ function AnimeCard(props: IProps) {
     }
     setThemesGenres(tmpGenreThemesArr);
   }, [animeObj]);
+
+  //onClick={()=>handleClick}
 
   return (
     <>
@@ -134,6 +148,9 @@ function AnimeCard(props: IProps) {
               ))}
             </Stack>
           </Box>
+          <CardActions>
+            <Button size="small" onClick={handleClickShowAnime}>Learn More</Button>
+          </CardActions>
         </Box>
       </Card>
     </>

@@ -16,6 +16,11 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import AnimeCard from "../../../UiComponents/AnimeCard";
 import Axios from "axios";
+import Dialog from "@mui/material/Dialog";
+
+import Slide from "@mui/material/Slide";
+import { TransitionProps } from "@mui/material/transitions";
+import AnimeInfoViewer from "../AnimeInfoViewer";
 
 enum ESeasons {
   winter = "Winter",
@@ -30,13 +35,22 @@ enum EMode {
 }
 
 enum AnimeType {
-  TV = 'tv',
-  MOVIE = 'movie',
-  OVA = 'ova',
-  SPECIAL = 'special',
-  ONA = 'ona',
-  MUSIC = 'music'
+  TV = "tv",
+  MOVIE = "movie",
+  OVA = "ova",
+  SPECIAL = "special",
+  ONA = "ona",
+  MUSIC = "music",
 }
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const apiEndpoint = "https://api.jikan.moe/v4";
 
@@ -49,6 +63,20 @@ function SeasonViewer() {
   const [animeList, setAnimeList] = React.useState<Array<any>>();
   const [currentAnimePage, setCurrentAnimePage] = React.useState(1);
   const [maxAnimePages, setMaxAnimePages] = React.useState(1);
+
+  const [openAnimeDialog, setOpenAnimeDialog] = React.useState(false);
+
+  const [selectedAnimeID, setSelectedAnimeID] = React.useState<string>("");
+
+  const handleAnimeClickOpen = () => {
+    //setSelectedAnimeID(selectedAnimeID);
+    console.log(selectedAnimeID)
+    setOpenAnimeDialog(true);
+  };
+
+  const handleAnimeClickClose = () => {
+    setOpenAnimeDialog(false);
+  };
 
   //ON LOAD, set the default values!
   React.useEffect(() => {
@@ -101,16 +129,15 @@ function SeasonViewer() {
 
   //On page change
   React.useEffect(() => {
-      const params = {
-        page: currentAnimePage,
-      };
-      Axios.get(`${apiEndpoint}/seasons/${selectedYear}/${season}`, {
-        params,
-      }).then((response) => {
-        setMaxAnimePages(Math.ceil(response.data.pagination.items.total / 25));
-        setAnimeList(response.data.data);
-      });
-    
+    const params = {
+      page: currentAnimePage,
+    };
+    Axios.get(`${apiEndpoint}/seasons/${selectedYear}/${season}`, {
+      params,
+    }).then((response) => {
+      setMaxAnimePages(Math.ceil(response.data.pagination.items.total / 25));
+      setAnimeList(response.data.data);
+    });
   }, [currentAnimePage]);
 
   //Handle the changes to the pages
@@ -124,6 +151,14 @@ function SeasonViewer() {
 
   return (
     <>
+      {/* <Dialog
+        fullScreen
+        open={openAnimeDialog}
+        onClose={handleAnimeClickClose}
+        TransitionComponent={Transition}
+      >
+        <AnimeInfoViewer malId={selectedAnimeID} handleClose={handleAnimeClickClose()}/>
+      </Dialog> */}
       <FormControl
         variant="outlined"
         size="small"
@@ -141,7 +176,7 @@ function SeasonViewer() {
         >
           <MenuItem value={"Spring"}>Spring</MenuItem>
           <MenuItem value={"Summer"}>Summer</MenuItem>
-          <MenuItem value={"Autumn"}>Autumn</MenuItem>
+          <MenuItem value={"Fall"}>Autumn</MenuItem>
           <MenuItem value={"Winter"}>Winter</MenuItem>
         </Select>
       </FormControl>
@@ -185,7 +220,12 @@ function SeasonViewer() {
       {/* Where the anime cards will go to, still need a top section to regulate pagination */}
       <Box sx={{ display: "flex", flexFlow: "wrap", padding: "5px" }}>
         {animeList?.map((obj, i) => (
-          <AnimeCard key={i} animeObj={obj} />
+          <AnimeCard
+            key={i}
+            animeObj={obj}
+            setSelectedID={setSelectedAnimeID}
+            setOpenDialog={handleAnimeClickOpen}
+          />
         ))}
       </Box>
     </>
