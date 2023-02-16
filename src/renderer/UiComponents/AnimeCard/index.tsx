@@ -8,7 +8,7 @@ import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import { makeStyles } from "@material-ui/core/styles";
 import { CardActions } from "@mui/material";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 
 interface IProps {
   animeObj: {
@@ -19,6 +19,7 @@ interface IProps {
 }
 const useStyles = makeStyles((theme) => ({
   root: {
+    transition: "transform 0.15s ease-in-out",
     width: "30%",
     [theme.breakpoints.down("lg")]: {
       width: "47%",
@@ -26,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       width: "100%",
     },
+  },
+  cardHovered: {
+    transform: "scale3d(1.05, 1.05, 1)",
   },
 }));
 
@@ -35,6 +39,11 @@ function AnimeCard(props: IProps) {
   const [summaryStats, setSummaryStats] = React.useState("");
   const [themesGenres, setThemesGenres] = React.useState<Array<string>>([""]);
   const classes = useStyles();
+
+  const [raisedState, setRaisedState] = React.useState({
+    raised: false,
+    shadow: 1,
+  });
 
   const {
     mal_id,
@@ -55,11 +64,11 @@ function AnimeCard(props: IProps) {
     duration,
   } = animeObj;
 
-  function handleClickShowAnime(){
-    console.log('test')
-    setSelectedID(mal_id)
-    console.log(setOpenDialog)
-    setOpenDialog(true)
+  function handleClickShowAnime() {
+    console.log("test");
+    setSelectedID(mal_id);
+    console.log(setOpenDialog);
+    setOpenDialog(true);
   }
 
   React.useEffect(() => {
@@ -86,14 +95,24 @@ function AnimeCard(props: IProps) {
     setThemesGenres(tmpGenreThemesArr);
   }, [animeObj]);
 
+
   //onClick={()=>handleClick}
 
   return (
     <>
-      <Card className={classes.root} sx={{ display: "flex", margin: "2px" }}>
+      <Card
+      
+        className={classes.root}
+        sx={{ display: "flex", margin: "2px" }}
+        classes={{ root: raisedState.raised ? classes.cardHovered : "" }}
+        onMouseOver={()=>setRaisedState({ raised: true, shadow:3})} 
+        onMouseOut={()=>setRaisedState({ raised:false, shadow:1 })} 
+        raised={raisedState.raised}
+        onClick={handleClickShowAnime}
+      >
         <CardMedia
           component="img"
-          sx={{ width: 151 }}
+          sx={{ width: "30%", objectFit: "fill" }}
           image={images.jpg.large_image_url}
         />
         <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -148,9 +167,9 @@ function AnimeCard(props: IProps) {
               ))}
             </Stack>
           </Box>
-          <CardActions>
+          {/* <CardActions>
             <Button size="small" onClick={handleClickShowAnime}>Learn More</Button>
-          </CardActions>
+          </CardActions> */}
         </Box>
       </Card>
     </>

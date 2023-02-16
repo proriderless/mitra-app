@@ -113,70 +113,27 @@ function AnimeInfoViewer(props: IProps) {
       </AppBar>
       {!loaded && (
         <>
-        <div style={{width: "80%", textAlign:"center"}}>
-          <HeroComponent title={animeInfo?.title} description={summaryStats} imgUrl={imgURL} backgroundColor="fef"/>
-        </div>
-        {/* <Card sx={{ display: "flex", margin: "2px" }}>
-          <CardMedia component="img" sx={{ width: "50%", objectFit: "contain"}} image={imgURL} />
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <CardContent sx={{ flex: "1 0 auto" }}>
-              <Typography component="div" variant="h6">
-                {animeInfo?.title}
-              </Typography>
-              <Typography
-                component="div"
-                variant="subtitle1"
-                color="text.secondary"
-              >
-                {summaryStats}
-              </Typography>
-
-              <Box
-                sx={{
-                  mb: 2,
-                  display: "flex",
-                  flexDirection: "column",
-                  height: 200,
-                  overflow: "hidden",
-                  overflowY: "scroll",
-                }}
-              >
-                <Typography
-                  component="div"
-                  variant="subtitle1"
-                  color="text.secondary"
-                >
-                  {animeInfo?.synopsis}
-                </Typography>
-              </Box>
-            </CardContent>
-
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                mb: "2px",
+          <div style={{ width: "100%" }}>
+            <div
+              style={{
+                backgroundColor:
+                  "linear-gradient(90deg, rgba(51,235,190,0.47942927170868344) 0%, rgba(67,244,186,1) 100%);",
+                background: "rgba(76, 175, 80)",
+                filter: "blur(8px)",
+                zIndex: 1,
+                display: "absolute",
               }}
-            >
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="center"
-                spacing={1}
-                sx={{ flexWrap: "wrap" }}
-              >
-                {themesGenres.map((str, i) => (
-                  <Chip
-                    key={i}
-                    label={str}
-                    sx={{ backgroundColor: "#1de9b6" }}
-                  />
-                ))}
-              </Stack>
-            </Box>
-            <CardActions></CardActions>
-          </Box>
-        </Card> */}
+            ></div>
+            <HeroComponent
+              title={animeInfo?.title}
+              title_eng={animeInfo?.title_english}
+              title_jap={animeInfo?.title_japanese}
+              description={summaryStats}
+              imgUrl={imgURL}
+              backgroundColor="fef"
+            />
+          </div>
+          {}
         </>
       )}
     </>
