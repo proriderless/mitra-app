@@ -151,14 +151,14 @@ function SeasonViewer() {
 
   return (
     <>
-      {/* <Dialog
+      <Dialog
         fullScreen
         open={openAnimeDialog}
         onClose={handleAnimeClickClose}
         TransitionComponent={Transition}
       >
-        <AnimeInfoViewer malId={selectedAnimeID} handleClose={handleAnimeClickClose()}/>
-      </Dialog> */}
+        <AnimeInfoViewer malId={selectedAnimeID} handleClose={handleAnimeClickClose}/>
+      </Dialog>
       <FormControl
         variant="outlined"
         size="small"

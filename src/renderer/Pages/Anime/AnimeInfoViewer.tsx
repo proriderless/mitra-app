@@ -9,10 +9,20 @@ import Grid from "@mui/material/Grid";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import { CardActions } from "@mui/material";
+import Button from "@mui/material/Button";
+
+//Self built component:
+import HeroComponent from "../../UiComponents/HeroContainer";
 
 interface IProps {
   malId: string;
@@ -25,47 +35,64 @@ interface animeInfoReturn {
 }
 
 function AnimeInfoViewer(props: IProps) {
-
-  const {malId, handleClose} = props
+  const { malId, handleClose } = props;
 
   const [loaded, setLoadedState] = React.useState(false);
   const [animeInfo, setAnimeInfo] = React.useState<animeInfoReturn>();
 
+  const [summaryStats, setSummaryStats] = React.useState("");
+  const [themesGenres, setThemesGenres] = React.useState([""]);
+
   const [imgURL, setImgURL] = React.useState("");
-  const [title, setTitle] = React.useState("");
-  const [titleJap, setTitleJap] = React.useState("");
-  const [titleSynonym, setTitleSynonyms] = React.useState([]);
-  const [duration, setDuration] = React.useState("");
-  const [synopsis, setSynopsis] = React.useState("");
-  const [genre, setGenres] = React.useState("");
-  const [episodes, setEpisodes] = React.useState(0);
-  const [airStatus, setAirStatus] = React.useState("");
 
   const testingid = "51678";
 
   const closeTheView = () => {
-    handleClose(false)
-  }
+    handleClose(false);
+  };
 
   React.useEffect(() => {
-    console.log("show")
-    setLoadedState(false)
+    console.log("show");
+    setLoadedState(false);
     axios
-      .get(`https://api.jikan.moe/v4/anime/${testingid}/full`)
+      .get(`https://api.jikan.moe/v4/anime/${malId}/full`)
       .then((response) => {
         setAnimeInfo(response.data.data);
         setLoadedState(false);
-        console.log(animeInfo)
+        console.log(animeInfo);
       })
       .catch((error) => {
         console.log("Something went wrong!");
       });
   }, [malId]);
 
-  // React.useEffect(() => {
-  //   setImgURL(animeInfo?.images.jpg.images_url)
+  React.useEffect(() => {
+    let tmpResultText = "";
 
-  // }, [animeInfo])
+    console.log(animeInfo);
+    if (animeInfo != null) {
+      setImgURL(animeInfo?.images.jpg.image_url);
+
+      tmpResultText += animeInfo?.type + " - ";
+      tmpResultText += animeInfo?.duration + " - ";
+      tmpResultText += animeInfo?.episodes + " Episodes - ";
+      tmpResultText += "Score: " + animeInfo?.score;
+
+      setSummaryStats(tmpResultText);
+
+      //Set the genres + themes
+      let tmpGenreThemesArr = [];
+
+      for (let genre of animeInfo?.genres) {
+        tmpGenreThemesArr.push(genre.name);
+      }
+
+      for (let theme of animeInfo?.themes) {
+        tmpGenreThemesArr.push(theme.name);
+      }
+      setThemesGenres(tmpGenreThemesArr);
+    }
+  }, [animeInfo]);
 
   return (
     <>
@@ -84,20 +111,74 @@ function AnimeInfoViewer(props: IProps) {
           </IconButton>
         </Toolbar>
       </AppBar>
-        {!loaded && <div>
-          <Paper elevation={3}>
-            <Box sx={{ flexGrow: 1 }}>
-              <Grid container spacing={2}>
-                <Grid item xs={8}>
-                  <img src={animeInfo?.images.jpg.image_url}/>
-                </Grid>
-                <Grid item xs={4}>
-                  <Typography variant="h3">{animeInfo?.title}</Typography>
-                </Grid>
-              </Grid>
+      {!loaded && (
+        <>
+        <div style={{width: "80%", textAlign:"center"}}>
+          <HeroComponent title={animeInfo?.title} description={summaryStats} imgUrl={imgURL} backgroundColor="fef"/>
+        </div>
+        {/* <Card sx={{ display: "flex", margin: "2px" }}>
+          <CardMedia component="img" sx={{ width: "50%", objectFit: "contain"}} image={imgURL} />
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <CardContent sx={{ flex: "1 0 auto" }}>
+              <Typography component="div" variant="h6">
+                {animeInfo?.title}
+              </Typography>
+              <Typography
+                component="div"
+                variant="subtitle1"
+                color="text.secondary"
+              >
+                {summaryStats}
+              </Typography>
+
+              <Box
+                sx={{
+                  mb: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  height: 200,
+                  overflow: "hidden",
+                  overflowY: "scroll",
+                }}
+              >
+                <Typography
+                  component="div"
+                  variant="subtitle1"
+                  color="text.secondary"
+                >
+                  {animeInfo?.synopsis}
+                </Typography>
+              </Box>
+            </CardContent>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                mb: "2px",
+              }}
+            >
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="center"
+                spacing={1}
+                sx={{ flexWrap: "wrap" }}
+              >
+                {themesGenres.map((str, i) => (
+                  <Chip
+                    key={i}
+                    label={str}
+                    sx={{ backgroundColor: "#1de9b6" }}
+                  />
+                ))}
+              </Stack>
             </Box>
-          </Paper>
-        </div>}
+            <CardActions></CardActions>
+          </Box>
+        </Card> */}
+        </>
+      )}
     </>
   );
 }

@@ -90,16 +90,6 @@ function SearchViewer() {
 
   return (
     <>
-      {/* DO NOT USE DIALOG!!!! */}
-      {/* {openAnimeDialog && ("test")} */}
-      {/* {openAnimeDialog && (
-        <FloatingContainerView zIndex="1000">
-          <AnimeInfoViewer
-            malId={selectedAnimeID}
-            handleClose={handleAnimeClickClose}
-          />
-        </FloatingContainerView>
-      )} */}
       <Dialog
         fullScreen
         open={openAnimeDialog}
