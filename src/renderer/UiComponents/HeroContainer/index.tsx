@@ -58,7 +58,7 @@ function HeroComponent(props: IProps) {
           <Grid
             style={{
               height: "100%",
-              marginLeft: "50%",
+              marginLeft: "30%",
               alignItems: "center",
               justifyContent: "right",
             }}

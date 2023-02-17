@@ -21,6 +21,8 @@ import Stack from "@mui/material/Stack";
 import { CardActions } from "@mui/material";
 import Button from "@mui/material/Button";
 
+import { DateTime, Interval } from "luxon";
+
 //Self built component:
 import HeroComponent from "../../UiComponents/HeroContainer";
 
@@ -51,6 +53,31 @@ function AnimeInfoViewer(props: IProps) {
     handleClose(false);
   };
 
+  //Determine the number of episodes that have been aired since the start
+  function determineNumOfEpisodes(){
+    if (animeInfo != null){
+      let status = animeInfo.airing
+      if (animeInfo.airing === false){
+        return animeInfo.episodes
+      } else {
+        let currentDate = DateTime.now()
+        let airedDate = DateTime.fromISO(animeInfo.aired.from)
+        console.log(currentDate)
+        console.log(airedDate)
+        let diffIntObj = Interval.fromDateTimes(airedDate, currentDate);
+        console.log(diffIntObj)
+        let diffWeeks = diffIntObj.length("weeks")
+
+        if (Number.isNaN(diffWeeks)) {
+          //not aired
+          return -1
+        } else {
+          return Math.floor(diffWeeks) + 1
+        }
+      }
+    }
+  }
+
   React.useEffect(() => {
     console.log("show");
     setLoadedState(false);
@@ -72,6 +99,8 @@ function AnimeInfoViewer(props: IProps) {
     console.log(animeInfo);
     if (animeInfo != null) {
       setImgURL(animeInfo?.images.jpg.image_url);
+
+      console.log("Num Of Eps " + determineNumOfEpisodes())
 
       tmpResultText += animeInfo?.type + " - ";
       tmpResultText += animeInfo?.duration + " - ";
@@ -133,7 +162,31 @@ function AnimeInfoViewer(props: IProps) {
               backgroundColor="fef"
             />
           </div>
-          {}
+          <Card>
+              <CardContent>
+                <Typography variant="h3" gutterBottom>
+                  Synopsis
+                </Typography>
+                <Box
+                  sx={{
+                    mb: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    height: 200,
+                    overflow: "hidden",
+                    overflowY: "scroll",
+                  }}
+                >
+                  <Typography
+                    component="div"
+                    variant="subtitle1"
+                    color="text.secondary"
+                  >
+                    {animeInfo?.synopsis}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
         </>
       )}
     </>
