@@ -112,7 +112,7 @@ function AnimeCard(props: IProps) {
       >
         <CardMedia
           component="img"
-          sx={{ width: "30%", objectFit: "fill" }}
+          sx={{ width: "121px", objectFit: "cover" }}
           image={images.jpg.large_image_url}
         />
         <Box sx={{ display: "flex", flexDirection: "column" }}>

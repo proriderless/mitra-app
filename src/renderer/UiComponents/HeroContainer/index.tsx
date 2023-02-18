@@ -35,22 +35,25 @@ function HeroComponent(props: IProps) {
       </div> */}
       <Box
         sx={{
-          backdropFilter:"blur(5px)",
-          width: "100%",
+          backdropFilter: "blur(5px)",
+          width: "80%",
+          marginLeft: "10%",
+          marginRight: "10%",
           //marginLeft: "10%",
           //flexGrow: 1,
           display: "flex",
-          height:"100%",
-          WebkitBackdropFilter:"blur(5px)",
+          //height: "100%",
+          WebkitBackdropFilter: "blur(5px)",
           background:
-                  "linear-gradient(90deg, rgba(51,235,190,0.47942927170868344) 0%, rgba(67,244,186,1) 100%);",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+            "linear-gradient(90deg, rgba(51,235,190,0.47942927170868344) 0%, rgba(67,244,186,1) 100%);",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         <Grid
           container
           spacing={0}
+          alignItems="center"
           style={{
             height: "100%",
           }}
@@ -58,33 +61,31 @@ function HeroComponent(props: IProps) {
           <Grid
             style={{
               height: "100%",
-              marginLeft: "30%",
-              alignItems: "center",
-              justifyContent: "right",
+              //marginLeft: "30%",
+              // alignItems: "center",
+              // justifyContent: "center",
             }}
             item
-            xs={12}
-            lg={4}
+            sm={5}
+            md={5}
           >
             <img src={imgUrl} />
           </Grid>
-        </Grid>
-        <Grid
-          container
-          spacing={0}
-          style={{
-            alignItems: "center",
-            justifyContent: "left",
-            //marginRight: "30%",
-          }}
-        >
+
           <Grid
             item
-            xs={12}
-            lg={8}
+            sm={5}
+            md={5}
             columnSpacing={0}
             rowSpacing={0}
-            direction="column"
+            alignContent="center"
+            style={
+              {
+                // alignItems: "center",
+                // justifyContent: "center",
+                //marginRight: "20%",
+              }
+            }
           >
             <Typography component="div" variant="h5">
               {title}
@@ -96,8 +97,6 @@ function HeroComponent(props: IProps) {
             <Typography component="div" variant="body1">
               {title_eng}
             </Typography>
-          </Grid>
-          <Grid item xs={12}>
             {description}
           </Grid>
         </Grid>

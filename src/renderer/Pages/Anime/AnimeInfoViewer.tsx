@@ -1,11 +1,6 @@
 import React from "react";
 
 //Deal with transiition
-import Slide from "@mui/material/Slide";
-import { TransitionProps } from "@mui/material/transitions";
-import Dialog from "@mui/material/Dialog";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -20,6 +15,17 @@ import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import { CardActions } from "@mui/material";
 import Button from "@mui/material/Button";
+
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+
+//Table
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
 
 import { DateTime, Interval } from "luxon";
 
@@ -46,6 +52,9 @@ function AnimeInfoViewer(props: IProps) {
   const [themesGenres, setThemesGenres] = React.useState([""]);
 
   const [imgURL, setImgURL] = React.useState("");
+  const [episodesList, setEpisodesList] = React.useState<
+    Array<{ Episode: string }>
+  >([]);
 
   const testingid = "51678";
 
@@ -54,25 +63,25 @@ function AnimeInfoViewer(props: IProps) {
   };
 
   //Determine the number of episodes that have been aired since the start
-  function determineNumOfEpisodes(){
-    if (animeInfo != null){
-      let status = animeInfo.airing
-      if (animeInfo.airing === false){
-        return animeInfo.episodes
+  function determineNumOfEpisodes() {
+    if (animeInfo != null) {
+      let status = animeInfo.airing;
+      if (animeInfo.airing === false) {
+        return animeInfo.episodes;
       } else {
-        let currentDate = DateTime.now()
-        let airedDate = DateTime.fromISO(animeInfo.aired.from)
-        console.log(currentDate)
-        console.log(airedDate)
+        let currentDate = DateTime.now();
+        let airedDate = DateTime.fromISO(animeInfo.aired.from);
+        console.log(currentDate);
+        console.log(airedDate);
         let diffIntObj = Interval.fromDateTimes(airedDate, currentDate);
-        console.log(diffIntObj)
-        let diffWeeks = diffIntObj.length("weeks")
+        console.log(diffIntObj);
+        let diffWeeks = diffIntObj.length("weeks");
 
         if (Number.isNaN(diffWeeks)) {
           //not aired
-          return -1
+          return -1;
         } else {
-          return Math.floor(diffWeeks) + 1
+          return Math.floor(diffWeeks) + 1;
         }
       }
     }
@@ -100,7 +109,17 @@ function AnimeInfoViewer(props: IProps) {
     if (animeInfo != null) {
       setImgURL(animeInfo?.images.jpg.image_url);
 
-      console.log("Num Of Eps " + determineNumOfEpisodes())
+      let numOfEpisodes = determineNumOfEpisodes();
+      console.log("Num Of Eps " + numOfEpisodes);
+      let episodeNames = [];
+
+      //Add the episode name, for now we keep it generic.
+      //But easy to modify in the future
+      for (let i = 1; i <= numOfEpisodes; i++) {
+        episodeNames.push({ Episode: "Episode: " + i });
+      }
+
+      setEpisodesList(episodeNames);
 
       tmpResultText += animeInfo?.type + " - ";
       tmpResultText += animeInfo?.duration + " - ";
@@ -150,7 +169,7 @@ function AnimeInfoViewer(props: IProps) {
                 background: "rgba(76, 175, 80)",
                 filter: "blur(8px)",
                 zIndex: 1,
-                display: "absolute",
+                width: "100%",
               }}
             ></div>
             <HeroComponent
@@ -162,31 +181,77 @@ function AnimeInfoViewer(props: IProps) {
               backgroundColor="fef"
             />
           </div>
-          <Card>
-              <CardContent>
-                <Typography variant="h3" gutterBottom>
-                  Synopsis
-                </Typography>
-                <Box
-                  sx={{
-                    mb: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 200,
-                    overflow: "hidden",
-                    overflowY: "scroll",
-                  }}
+          <Card
+            sx={{
+              width: "80%",
+              marginTop: "10px",
+              marginLeft: "10%",
+              marginRight: "10%",
+            }}
+          >
+            <CardContent>
+              <Typography variant="h5" gutterBottom>
+                Synopsis
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "200px",
+                  overflow: "hidden",
+                  overflowY: "scroll",
+                }}
+              >
+                <Typography
+                  component="div"
+                  variant="subtitle1"
+                  color="text.secondary"
                 >
-                  <Typography
-                    component="div"
-                    variant="subtitle1"
-                    color="text.secondary"
+                  {animeInfo?.synopsis}
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+          <TableContainer
+            component={Paper}
+            sx={{
+              width: "80%",
+              marginTop: "20px",
+              marginLeft: "10%",
+              marginRight: "10%",
+            }}
+          >
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Episode</TableCell>
+                  <TableCell align="left">Play</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {episodesList.map((row, i) => (
+                  <TableRow
+                    key={i}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
-                    {animeInfo?.synopsis}
-                  </Typography>
-                </Box>
-              </CardContent>
-            </Card>
+                    <TableCell component="th" scope="row">
+                      {row.Episode}
+                    </TableCell>
+                    <TableCell align="left">
+                      <IconButton
+                        edge="start"
+                        color="inherit"
+                        onClick={closeTheView}
+                        aria-label="close"
+                      >
+                        <PlayArrowIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </>
       )}
     </>
