@@ -7,7 +7,7 @@ This app comes with a server backend component system that sends notifications v
 To-do
 - Finish up the anime viewing section
 - A block-style note editor (using editorjs)
-- Outfit the backend with a Chatbot (using distillgpt/Dialogpt) for telegram
+- Outfit the backend with a Chatbot for telegram
 - Theming, sprucing up
 
 LINK: https://github.com/proriderless/mitra-scheduler
