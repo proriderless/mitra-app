@@ -13,8 +13,9 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import { CardActions } from "@mui/material";
+import { CardActions, CardHeader } from "@mui/material";
 import Button from "@mui/material/Button";
+import { styled } from "@mui/material/styles";
 
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
@@ -36,6 +37,13 @@ interface IProps {
   malId: string;
   handleClose: any;
 }
+
+const CardContentNoPadding = styled(CardContent)`
+  padding-bottom: 0;
+  &:last-child {
+    padding-bottom: 10;
+  }
+`;
 
 //Return is dynamic cos API
 interface animeInfoReturn {
@@ -183,23 +191,22 @@ function AnimeInfoViewer(props: IProps) {
           </div>
           <Card
             sx={{
+              flex: "0 0 auto",
               width: "80%",
+              //height: "auto",
               marginTop: "10px",
               marginLeft: "10%",
               marginRight: "10%",
+              marginBottom: "2px",
+              paddingBottom: "0px",
             }}
           >
-            <CardContent>
-              <Typography variant="h5" gutterBottom>
-                Synopsis
-              </Typography>
+            <CardHeader title="Synopsis" />
+            <CardContentNoPadding>
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  height: "200px",
-                  overflow: "hidden",
-                  overflowY: "scroll",
                 }}
               >
                 <Typography
@@ -210,8 +217,9 @@ function AnimeInfoViewer(props: IProps) {
                   {animeInfo?.synopsis}
                 </Typography>
               </Box>
-            </CardContent>
+            </CardContentNoPadding>
           </Card>
+
           <TableContainer
             component={Paper}
             sx={{
