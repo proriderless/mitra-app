@@ -33,6 +33,9 @@ import { DateTime, Interval } from "luxon";
 //Self built component:
 import HeroComponent from "../../UiComponents/HeroContainer";
 
+//Import util functions
+import { findMagnetLink } from "./util";
+
 interface IProps {
   malId: string;
   handleClose: any;
@@ -48,6 +51,13 @@ const CardContentNoPadding = styled(CardContent)`
 //Return is dynamic cos API
 interface animeInfoReturn {
   [key: string | number]: any;
+}
+
+function playVideoMagnetLink() {
+  findMagnetLink("Oniichan wa Oshimai", 7)
+  .then((response) => {
+    console.log(response)
+  })
 }
 
 function AnimeInfoViewer(props: IProps) {
@@ -178,6 +188,7 @@ function AnimeInfoViewer(props: IProps) {
                 filter: "blur(8px)",
                 zIndex: 1,
                 width: "100%",
+                flex: "0 1 auto",
               }}
             ></div>
             <HeroComponent
@@ -191,14 +202,15 @@ function AnimeInfoViewer(props: IProps) {
           </div>
           <Card
             sx={{
-              flex: "0 0 auto",
+              flex: "1 0 auto",
               width: "80%",
-              //height: "auto",
+              //height: "100%",
               marginTop: "10px",
               marginLeft: "10%",
               marginRight: "10%",
               marginBottom: "2px",
               paddingBottom: "0px",
+              overflow:"auto",
             }}
           >
             <CardHeader title="Synopsis" />
@@ -223,10 +235,13 @@ function AnimeInfoViewer(props: IProps) {
           <TableContainer
             component={Paper}
             sx={{
+              flex: "1 0 auto",
               width: "80%",
+              //height: "100%",
               marginTop: "20px",
               marginLeft: "10%",
               marginRight: "10%",
+              marginBottom: "10px"
             }}
           >
             <Table aria-label="simple table">
@@ -249,7 +264,7 @@ function AnimeInfoViewer(props: IProps) {
                       <IconButton
                         edge="start"
                         color="inherit"
-                        onClick={closeTheView}
+                        onClick={playVideoMagnetLink}
                         aria-label="close"
                       >
                         <PlayArrowIcon />
