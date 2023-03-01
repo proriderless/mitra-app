@@ -98,3 +98,10 @@ scheduler.retrieveScheduleFile;
 
 const misc = require("./misc/misc");
 misc.openExternalLink;
+
+const torrent = require("./torrent/torrent")
+torrent.openTorrentServer
+torrent.destroyTorrentServer;
+
+
+

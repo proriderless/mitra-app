@@ -36,6 +36,8 @@ import HeroComponent from "../../UiComponents/HeroContainer";
 //Import util functions
 import { findMagnetLink } from "./util";
 
+import TorrentPlayer from "./TorrentPlayer";
+
 interface IProps {
   malId: string;
   handleClose: any;
@@ -54,10 +56,11 @@ interface animeInfoReturn {
 }
 
 function playVideoMagnetLink() {
-  findMagnetLink("Oniichan wa Oshimai", 7)
-  .then((response) => {
-    console.log(response)
-  })
+  findMagnetLink("Oniichan wa Oshimai", 7).then((response) => {
+    if (response != false) {
+      console.log(response)
+    }
+  });
 }
 
 function AnimeInfoViewer(props: IProps) {
@@ -210,7 +213,7 @@ function AnimeInfoViewer(props: IProps) {
               marginRight: "10%",
               marginBottom: "2px",
               paddingBottom: "0px",
-              overflow:"auto",
+              overflow: "auto",
             }}
           >
             <CardHeader title="Synopsis" />
@@ -241,7 +244,7 @@ function AnimeInfoViewer(props: IProps) {
               marginTop: "20px",
               marginLeft: "10%",
               marginRight: "10%",
-              marginBottom: "10px"
+              marginBottom: "10px",
             }}
           >
             <Table aria-label="simple table">

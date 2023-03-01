@@ -22,6 +22,8 @@ import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import AnimeInfoViewer from "../AnimeInfoViewer";
 
+import TorrentPlayer from "../TorrentPlayer";
+
 enum ESeasons {
   winter = "Winter",
   spring = "Spring",
@@ -70,7 +72,7 @@ function SeasonViewer() {
 
   const handleAnimeClickOpen = () => {
     //setSelectedAnimeID(selectedAnimeID);
-    console.log(selectedAnimeID)
+    console.log(selectedAnimeID);
     setOpenAnimeDialog(true);
   };
 
@@ -151,13 +153,17 @@ function SeasonViewer() {
 
   return (
     <>
+      <TorrentPlayer />
       <Dialog
         fullScreen
         open={openAnimeDialog}
         onClose={handleAnimeClickClose}
         TransitionComponent={Transition}
       >
-        <AnimeInfoViewer malId={selectedAnimeID} handleClose={handleAnimeClickClose}/>
+        <AnimeInfoViewer
+          malId={selectedAnimeID}
+          handleClose={handleAnimeClickClose}
+        />
       </Dialog>
       <FormControl
         variant="outlined"
