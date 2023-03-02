@@ -36,8 +36,6 @@ import HeroComponent from "../../UiComponents/HeroContainer";
 //Import util functions
 import { findMagnetLink } from "./util";
 
-import TorrentPlayer from "./TorrentPlayer";
-
 interface IProps {
   malId: string;
   handleClose: any;
@@ -55,13 +53,7 @@ interface animeInfoReturn {
   [key: string | number]: any;
 }
 
-function playVideoMagnetLink() {
-  findMagnetLink("Oniichan wa Oshimai", 7).then((response) => {
-    if (response != false) {
-      console.log(response)
-    }
-  });
-}
+
 
 function AnimeInfoViewer(props: IProps) {
   const { malId, handleClose } = props;
@@ -77,11 +69,24 @@ function AnimeInfoViewer(props: IProps) {
     Array<{ Episode: string }>
   >([]);
 
+  const [animeTitle, setAnimeTitle] = React.useState("");
+  const [episodeNum, setEpisodeNum] = React.useState(-1);
+
   const testingid = "51678";
 
   const closeTheView = () => {
     handleClose(false);
   };
+
+  function playVideoMagnetLink(epNum:number) {
+    console.log(animeTitle)
+    console.log(epNum)
+    findMagnetLink(animeTitle, epNum).then((response) => {
+      if (response != false) {
+        console.log(response);
+      }
+    });
+  }
 
   //Determine the number of episodes that have been aired since the start
   function determineNumOfEpisodes() {
@@ -148,6 +153,7 @@ function AnimeInfoViewer(props: IProps) {
       tmpResultText += "Score: " + animeInfo?.score;
 
       setSummaryStats(tmpResultText);
+      setAnimeTitle(animeInfo?.title)
 
       //Set the genres + themes
       let tmpGenreThemesArr = [];
@@ -267,7 +273,7 @@ function AnimeInfoViewer(props: IProps) {
                       <IconButton
                         edge="start"
                         color="inherit"
-                        onClick={playVideoMagnetLink}
+                        onClick={()=>playVideoMagnetLink(i+1)}
                         aria-label="close"
                       >
                         <PlayArrowIcon />

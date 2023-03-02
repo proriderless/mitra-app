@@ -66,7 +66,7 @@ function Home() {
     <>
       Home page
       <Button onClick={callCreateServer}>Run!</Button>
-      <Button onClick={callCreateServer}>Close Server!</Button>
+      <Button onClick={closeServer}>Close Server!</Button>
       {animeMovie[0]}
       {visibleMedia && (
         <MediaPlayer
