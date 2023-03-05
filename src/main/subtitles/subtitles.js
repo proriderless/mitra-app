@@ -7,8 +7,9 @@ const { SubtitleParser } = require("matroska-subtitles");
 const ffmpeg = require("fluent-ffmpeg");
 const { captureRejections } = require("stream");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
+const got = require('got');
 
-const preloadIPCID = ['video:getSubtitles', 'codec:transformVideo']
+const preloadIPCID = ["video:getSubtitles", "codec:transformVideo"];
 
 function isNullOrUndefinedOrEmptyString(s) {
   return !!s === false;
@@ -98,7 +99,7 @@ function createSubtitleFile(trackInfo) {
   //For now, we pick the first item in the map
   const [trackSubtitleInfo] = trackInfo.values();
   let outputSubtitle = "";
-  let fileType = "vtt"; //by right is let fileType = trackSubtitleInfo.type
+  let fileType = "vtt"; //by right is let fileType = trackSubtitleInfo.type -> But we fuck it and just use vtt as it's standard.
 
   switch (fileType) {
     case "ass":
@@ -158,7 +159,16 @@ function returnSubtitleTracks(streamerURL) {
       resolve(tracks);
     });
 
-    nodeFs.createReadStream(streamerURL).pipe(parser);
+    //Error is actually from this
+    if (streamerURL.includes("http")){
+      try {
+        got.stream(streamerURL).pipe(parser);
+      }catch (e){
+        console.log(e)
+      }
+    } else{
+      nodeFs.createReadStream(streamerURL).pipe(parser);
+    }
   });
 }
 
@@ -168,9 +178,9 @@ const retrieveSubtitle = electronIpcMain.handle(
   "video:getSubtitles",
   async (event, streamerURL) => {
     const tracks = await returnSubtitleTracks(streamerURL);
-    let subtitleFile = ''
+    let subtitleFile = "";
 
-    if (tracks !== false){
+    if (tracks !== false) {
       subtitleFile = createSubtitleFile(tracks);
     }
 

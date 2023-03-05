@@ -8,8 +8,11 @@ const {
 } = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
-const startupProcess = require("./startup/startup");
 const dotenv = require("dotenv").config();
+
+//Custom process to run
+const startupProcess = require("./startup/startup");
+const torrent = require("./torrent/torrent");
 
 // webPreferences: {
 //   preload: path.join(__dirname, preload.js),
@@ -45,6 +48,8 @@ function createWindow() {
 app.whenReady().then(() => {
   app.removeAllListeners("ready");
   createWindow();
+
+  //Run all the startup procedure
   startupProcess.runAllStartupFile();
   //Set up ENV variable on MAIN side
   dotenv;
@@ -72,6 +77,7 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", function () {
+  torrent.cleanupFiles()
   if (process.platform !== "darwin") app.quit();
 });
 
@@ -99,9 +105,7 @@ scheduler.retrieveScheduleFile;
 const misc = require("./misc/misc");
 misc.openExternalLink;
 
-const torrent = require("./torrent/torrent")
-torrent.openTorrentServer
+//The torrent require is on top because there is a on-close function it needs to run
+torrent.openTorrentServer;
 torrent.destroyTorrentServer;
-
-
-
+torrent.handleReturnParsedScript;

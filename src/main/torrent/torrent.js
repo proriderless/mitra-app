@@ -1,10 +1,15 @@
 const WebTorrent = require("webtorrent")
 const worker = require("./worker")
 const electronIpcMain = require("electron").ipcMain;
+const antimony = require("anitomyscript")
+const nodeElectron = require("electron")
+const fs = require("fs");
+const path = require("path");
 
 //Create a webtorrent global instance
 const client = new WebTorrent();
 var server
+worker
 
 //Initialize all the eventListner
 //worker
@@ -36,10 +41,31 @@ const openTorrentServer = electronIpcMain.handle(
   }
 );
 
+const handleReturnParsedScript = electronIpcMain.handle(
+  "torrent:returnParsedTitles",
+  async (event, titles) => {
+
+    let resultingArray = []
+
+    //Allow us to identify the index
+    let starting_i = 0
+
+    for (let title of titles){
+      let convertedRes = await antimony(title)
+      convertedRes["item_index"] = starting_i
+      resultingArray.push(convertedRes)
+      starting_i += 1
+    }
+    
+    return resultingArray
+
+  }
+)
+
 const destroyTorrentServer = electronIpcMain.handle(
     "torrent:destroyTorrentClient",
     (event) => {
-        cleanupServer
+        cleanupServer()
     }
 )
 
@@ -50,4 +76,19 @@ function cleanupServer() {
     }
 }
 
-module.exports = { openTorrentServer, destroyTorrentServer };
+function cleanupFiles(){
+  //This function cleans up all the temp files stored inside!
+  let tempFilePath = nodeElectron.app.getPath("temp") + "\\webtorrent"
+  
+  fs.readdir(tempFilePath, (err, files) => {
+    if (err) throw err;
+    for (const file of files){
+      fs.unlink(path.join(tempFilePath, file), (err) => {
+        if (err) throw err;
+      })
+    }
+  })
+
+}
+
+module.exports = { openTorrentServer, destroyTorrentServer, handleReturnParsedScript, cleanupFiles };

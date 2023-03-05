@@ -13,7 +13,7 @@ const schedulerLocalFilePreloadIPCID = [
 ];
 const miscPreloadIPCID = ["misc:OpenExternalLink"]
 
-const torrentPreloadIPCID = ["torrent:openTorrentServer", "torrent:destroyTorrentClient"]
+const torrentPreloadIPCID = ["torrent:openTorrentServer", "torrent:destroyTorrentClient", "torrent:returnParsedTitles"]
 
 const fullSendReceiveIPCID = [
   mediaPreloadIPCID,

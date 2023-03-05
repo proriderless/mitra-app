@@ -12,7 +12,7 @@ import Slider from "@mui/material/Slider";
 import PauseIcon from "@mui/icons-material/Pause";
 import { formatDuration } from "../../Utils/stringutils";
 import { textAlign } from "@mui/system";
-import { EIpcListener } from "../../Utils/enums";
+import { EIpcListener, ETorrentIpcListener } from "../../Utils/enums";
 // import workerUrl from './jassub/dist/jassub-worker.js?url'
 import "jassub/dist/jassub-worker.wasm?url";
 import {
@@ -38,11 +38,12 @@ declare global {
 type IProps = {
   mediaSrc: string,
   setMediaPlayerVisible: any //a function that sets the visibility of the media player
+  isTorrent: boolean //Check if the user is playing torrent, if it is, add close server functionality
 }
 
 function MediaPlayer(props:IProps) {
 
-  const {mediaSrc, setMediaPlayerVisible} = props
+  const {mediaSrc, setMediaPlayerVisible, isTorrent} = props
 
   const [videoSrc, setVideoSrc] = React.useState(mediaSrc);
   const [totalVideoDuration, setTotalVideoDuration] = React.useState<number>();
@@ -60,9 +61,13 @@ function MediaPlayer(props:IProps) {
 
   //Startup Actions
   React.useEffect(() => {
+    console.log("detected src from media player!!")
+    console.log(videoSrc)
     if (videoSrc.endsWith('.mkv')){
+      console.log("try to retrieve subs")
       retrieveSubtitles();
     } else {
+      console.log("doesn't bother")
       setVideoVisible(true);
     }
     setInterval(() => setVisibleControlPanel('0'), 5000)
@@ -96,6 +101,8 @@ function MediaPlayer(props:IProps) {
   };
 
   function retrieveSubtitles() {
+    console.log("I'm running!")
+    console.log(videoSrc)
     window.ipcRenderer
       .invoke(EIpcListener.RETRIEVE_SUBTITLES, videoSrc)
       .then((response: any) => {
@@ -104,6 +111,8 @@ function MediaPlayer(props:IProps) {
           subContent: response,
         };
 
+        console.log("Subtitles has loaded!!")
+        
         if (response !== "") {
           setSubtitleTrack(
             "D:\\Desktop\\Projects\\Personal Projects\\Personal Program\\mitra-app\\testSubtitle.vtt"
@@ -142,6 +151,23 @@ function MediaPlayer(props:IProps) {
     }
     e.preventDefault()
   }
+
+  function closeServer() {
+    window.ipcRenderer
+      .invoke(ETorrentIpcListener.DESTROY_TORRENT_SERVER)
+      .then((result: any) => {
+        console.log(result);
+      });
+  }
+
+  function closeMediaPlayer() {
+    if (isTorrent === true){
+      //It's a torrent file, make sure to close the server as well
+      closeServer()
+    } 
+    setMediaPlayerVisible(false)
+  }
+
 
   return (
     <>
@@ -238,7 +264,7 @@ function MediaPlayer(props:IProps) {
             </IconButton>
             <IconButton
               aria-label="close the media player"
-              onClick={() => setMediaPlayerVisible(false)}
+              onClick={closeMediaPlayer}
               >
                 <HighlightOffIcon />
             </IconButton>

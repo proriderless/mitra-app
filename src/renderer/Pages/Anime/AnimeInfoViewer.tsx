@@ -32,9 +32,10 @@ import { DateTime, Interval } from "luxon";
 
 //Self built component:
 import HeroComponent from "../../UiComponents/HeroContainer";
+import MediaPlayer from "../../UiComponents/MediaPlayer";
 
 //Import util functions
-import { findMagnetLink } from "./util";
+import {openServerAndfindFilePath } from "./util";
 
 interface IProps {
   malId: string;
@@ -53,8 +54,6 @@ interface animeInfoReturn {
   [key: string | number]: any;
 }
 
-
-
 function AnimeInfoViewer(props: IProps) {
   const { malId, handleClose } = props;
 
@@ -65,12 +64,14 @@ function AnimeInfoViewer(props: IProps) {
   const [themesGenres, setThemesGenres] = React.useState([""]);
 
   const [imgURL, setImgURL] = React.useState("");
-  const [episodesList, setEpisodesList] = React.useState<
-    Array<{ Episode: string }>
-  >([]);
+  const [episodesList, setEpisodesList] = React.useState<Array<{ Episode: string }>>([]);
 
   const [animeTitle, setAnimeTitle] = React.useState("");
   const [episodeNum, setEpisodeNum] = React.useState(-1);
+
+
+  const [visibleMedia, setMediaPlayerVisible] = React.useState(false)
+  const [mediaSrc, setMediaSrc] = React.useState("")
 
   const testingid = "51678";
 
@@ -81,9 +82,13 @@ function AnimeInfoViewer(props: IProps) {
   function playVideoMagnetLink(epNum:number) {
     console.log(animeTitle)
     console.log(epNum)
-    findMagnetLink(animeTitle, epNum).then((response) => {
-      if (response != false) {
-        console.log(response);
+    openServerAndfindFilePath(animeTitle, epNum).then((response) => {
+      console.log(response)
+      if (response != null && response != false){
+        setMediaSrc(`http://localhost:1500/${response}`)
+        setMediaPlayerVisible(true)
+      } else {
+        console.log("error")
       }
     });
   }
@@ -171,6 +176,13 @@ function AnimeInfoViewer(props: IProps) {
 
   return (
     <>
+    {visibleMedia && (
+        <MediaPlayer
+          mediaSrc={mediaSrc}
+          setMediaPlayerVisible={setMediaPlayerVisible}
+          isTorrent={true}
+        />
+      )}
       <AppBar sx={{ position: "relative" }}>
         <Toolbar>
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">

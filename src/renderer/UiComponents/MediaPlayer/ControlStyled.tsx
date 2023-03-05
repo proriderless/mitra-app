@@ -17,6 +17,7 @@ export const InlineContainer = styled("div")`
   display: inline;
 `;
 
+//Configuration for bottom centering
 export const MediaVideoControlContainer = styled("div")<IMediaVideoControlContainer>`
   display: 'inline';
   background-color: rgba(255, 255, 255, 0.55);
@@ -25,16 +26,35 @@ export const MediaVideoControlContainer = styled("div")<IMediaVideoControlContai
   -webkit-backdrop-filter: blur(10px);
   position: absolute;
   opacity: ${p => p.opacity || 1};
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  left: 25%;
+  bottom: 20px;
   width: 50%;
-  height: 25%;
+  height: 35%;
   max-height: 100px;
   z-index: 50;
-  margin: auto
+  margin: 0 auto
 `;
+
+//Configuration for centering
+// export const MediaVideoControlContainer = styled("div")<IMediaVideoControlContainer>`
+//   display: 'inline';
+//   background-color: rgba(255, 255, 255, 0.55);
+//   border-radius: 5px;
+//   padding: 1rem 5px;
+//   -webkit-backdrop-filter: blur(10px);
+//   position: absolute;
+//   opacity: ${p => p.opacity || 1};
+//   left: 0;
+//   right: 0;
+//   top: 0;
+//   bottom: 0;
+//   width: 50%;
+//   height: 25%;
+//   max-height: 100px;
+//   z-index: 50;
+//   margin: auto
+// `;
+
 
 export const TinyText = styled(Typography)({
   fontSize: '0.75rem',

@@ -131,6 +131,7 @@ function Explorer() {
         <MediaPlayer
           mediaSrc={videoSrc}
           setMediaPlayerVisible={setMediaPlayerVisible}
+          isTorrent={false}
         />
       )}
 

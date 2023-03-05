@@ -27,6 +27,7 @@
     "@types/node": "^16.11.43",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
+    "anitomyscript": "^2.0.4",
     "axios": "^0.27.2",
     "cheerio": "^1.0.0-rc.12",
     "debounce": "^1.2.1",

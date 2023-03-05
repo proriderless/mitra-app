@@ -38,6 +38,12 @@ export enum EMiscIpcListener {
     OPEN_EXTERNAL_LINK = 'misc:OpenExternalLink'
 }
 
+export enum ETorrentIpcListener {
+    OPEN_TORRENT_LISTENER = "torrent:openTorrentServer",
+    DESTROY_TORRENT_SERVER = "torrent:destroyTorrentClient",
+    HANDLE_PARSED_TITLES = "torrent:returnParsedTitles"
+}
+
 export enum EUpdateMode {
     UPDATE = 'update',
     NEW = 'new',
@@ -49,4 +55,9 @@ export enum EAlertType {
     ERROR = 'error',
     INFO = 'info',
     WARNING = 'warning'
+}
+
+export enum Resolution {
+    STANDARD_HD = "720p",
+    NORMAL_HD = "1080p"
 }
