@@ -11,9 +11,9 @@ declare global {
 }
 
 //This will open up the torrent server and find the file path!!
-export async function openServerAndfindFilePath(animeName: string, episode: number) {
+export async function openServerAndfindFilePath(animeName: string, episode: number, subGroup: string) {
   //Scrape from the port
-  let getMagnetLink = await findMagnetLink(animeName, episode)
+  let getMagnetLink = await findMagnetLink(animeName, episode, subGroup)
 
   console.log(getMagnetLink)
 
@@ -34,10 +34,10 @@ export async function openServerAndfindFilePath(animeName: string, episode: numb
   
 }
 
-export async function findMagnetLink(animeName: string, episode: number) {
+export async function findMagnetLink(animeName: string, episode: number, subGroup: string) {
   let link = `https://nyaa.si/?page=rss&q=${encodeURIComponent(
     animeName
-  )}&c=0_0&f=0&u=subsplease`;
+  )}&c=0_0&f=0&u=${subGroup}`;
   let firstMainLinkResponse = await axios.get(link, { responseType: "text" });
 
   //Straight away return false if the status is not 200!
@@ -115,10 +115,11 @@ async function identifyEpisodeIndex(
   );
 
   let resultingArrayEp = result.filter(function (el: any) {
-    return el.episode_number == episode && el.video_resolution == resolution;
+    return el.episode_number == episode;
   });
 
   //Get the first item as fallback
+  console.log(resultingArrayEp)
   let fallbackResult = resultingArrayEp[0]["item_index"];
 
   //Check if there is only one video, if there is, that means there are no alternating resolutions!

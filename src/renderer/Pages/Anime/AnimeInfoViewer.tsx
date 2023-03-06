@@ -16,8 +16,13 @@ import Stack from "@mui/material/Stack";
 import { CardActions, CardHeader } from "@mui/material";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
-
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
 
 //Table
 import Table from "@mui/material/Table";
@@ -35,7 +40,7 @@ import HeroComponent from "../../UiComponents/HeroContainer";
 import MediaPlayer from "../../UiComponents/MediaPlayer";
 
 //Import util functions
-import {openServerAndfindFilePath } from "./util";
+import { openServerAndfindFilePath } from "./util";
 
 interface IProps {
   malId: string;
@@ -64,14 +69,20 @@ function AnimeInfoViewer(props: IProps) {
   const [themesGenres, setThemesGenres] = React.useState([""]);
 
   const [imgURL, setImgURL] = React.useState("");
-  const [episodesList, setEpisodesList] = React.useState<Array<{ Episode: string }>>([]);
+  const [episodesList, setEpisodesList] = React.useState<
+    Array<{ Episode: string }>
+  >([]);
 
   const [animeTitle, setAnimeTitle] = React.useState("");
   const [episodeNum, setEpisodeNum] = React.useState(-1);
 
+  const [visibleMedia, setMediaPlayerVisible] = React.useState(false);
+  const [mediaSrc, setMediaSrc] = React.useState("");
 
-  const [visibleMedia, setMediaPlayerVisible] = React.useState(false)
-  const [mediaSrc, setMediaSrc] = React.useState("")
+  const [subGroup, setSubGroup] = React.useState("subsplease");
+  const handleSubGroupChange = (event: SelectChangeEvent) => {
+    setSubGroup(event.target.value);
+  };
 
   const testingid = "51678";
 
@@ -79,16 +90,16 @@ function AnimeInfoViewer(props: IProps) {
     handleClose(false);
   };
 
-  function playVideoMagnetLink(epNum:number) {
-    console.log(animeTitle)
-    console.log(epNum)
-    openServerAndfindFilePath(animeTitle, epNum).then((response) => {
-      console.log(response)
-      if (response != null && response != false){
-        setMediaSrc(`http://localhost:1500/${response}`)
-        setMediaPlayerVisible(true)
+  function playVideoMagnetLink(epNum: number) {
+    console.log(animeTitle);
+    console.log(epNum);
+    openServerAndfindFilePath(animeTitle, epNum, subGroup).then((response) => {
+      console.log(response);
+      if (response != null && response != false) {
+        setMediaSrc(`http://localhost:1500/${response}`);
+        setMediaPlayerVisible(true);
       } else {
-        console.log("error")
+        console.log("error");
       }
     });
   }
@@ -158,7 +169,7 @@ function AnimeInfoViewer(props: IProps) {
       tmpResultText += "Score: " + animeInfo?.score;
 
       setSummaryStats(tmpResultText);
-      setAnimeTitle(animeInfo?.title)
+      setAnimeTitle(animeInfo?.title);
 
       //Set the genres + themes
       let tmpGenreThemesArr = [];
@@ -176,7 +187,7 @@ function AnimeInfoViewer(props: IProps) {
 
   return (
     <>
-    {visibleMedia && (
+      {visibleMedia && (
         <MediaPlayer
           mediaSrc={mediaSrc}
           setMediaPlayerVisible={setMediaPlayerVisible}
@@ -253,6 +264,20 @@ function AnimeInfoViewer(props: IProps) {
             </CardContentNoPadding>
           </Card>
 
+          <FormControl sx={{ m: 1, width: "80%", marginLeft: "10%", marginRight: "10%", marginTop: "10px", marginBottom: "2px"}}>
+            <InputLabel id="subgroup-change-select-label">Sub-Group</InputLabel>
+            <Select
+              labelId="subgroup-change-select-label"
+              id="subgroup-change-select"
+              value={subGroup}
+              label="Sub-Group"
+              onChange={handleSubGroupChange}
+            >
+              <MenuItem value={"subsplease"}>SubsPlease</MenuItem>
+              <MenuItem value={"erai-raws"}>Erai-Raws</MenuItem>
+            </Select>
+          </FormControl>
+
           <TableContainer
             component={Paper}
             sx={{
@@ -285,7 +310,7 @@ function AnimeInfoViewer(props: IProps) {
                       <IconButton
                         edge="start"
                         color="inherit"
-                        onClick={()=>playVideoMagnetLink(i+1)}
+                        onClick={() => playVideoMagnetLink(i + 1)}
                         aria-label="close"
                       >
                         <PlayArrowIcon />

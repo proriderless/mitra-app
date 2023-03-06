@@ -1,9 +1,11 @@
 const fileResponse = require('./worker-server.js')
 
-try {
-  if(!self.window){
-    window=self;
 
+try {
+
+    if(!self.window){window=self;}
+
+    
     self.addEventListener('install', () => {
       self.skipWaiting()
     })
@@ -16,7 +18,6 @@ try {
     self.addEventListener('activate', () => {
       self.clients.claim()
     })
-  }
 } catch(e) { // do nothing 
   console.log('throw something if not workign')
 }

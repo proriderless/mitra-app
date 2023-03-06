@@ -1,22 +1,19 @@
-const WebTorrent = require("webtorrent")
-const worker = require("./worker")
+const WebTorrent = require("webtorrent");
+const worker = require("./worker");
 const electronIpcMain = require("electron").ipcMain;
-const antimony = require("anitomyscript")
-const nodeElectron = require("electron")
+const antimony = require("anitomyscript");
+const nodeElectron = require("electron");
 const fs = require("fs");
 const path = require("path");
 
 //Create a webtorrent global instance
 const client = new WebTorrent();
-var server
-worker
+var server;
 
 //Initialize all the eventListner
-//worker
-
 const openTorrentServer = electronIpcMain.handle(
   "torrent:openTorrentServer",
-  (event, magnetURI) => {
+   (event, magnetURI) => {
 
     const torrentFiles = client.add(magnetURI, function (torrent) {
       // create HTTP server for this torrent
@@ -33,62 +30,63 @@ const openTorrentServer = electronIpcMain.handle(
       });
 
       //Can close the server as we have the files!
-      client.on("done", function(){
+      client.on("done", function () {
         server.close();
-      })
+      });
     });
-    
   }
 );
 
 const handleReturnParsedScript = electronIpcMain.handle(
   "torrent:returnParsedTitles",
   async (event, titles) => {
-
-    let resultingArray = []
+    let resultingArray = [];
 
     //Allow us to identify the index
-    let starting_i = 0
+    let starting_i = 0;
 
-    for (let title of titles){
-      let convertedRes = await antimony(title)
-      convertedRes["item_index"] = starting_i
-      resultingArray.push(convertedRes)
-      starting_i += 1
+    for (let title of titles) {
+      let convertedRes = await antimony(title);
+      convertedRes["item_index"] = starting_i;
+      resultingArray.push(convertedRes);
+      starting_i += 1;
     }
-    
-    return resultingArray
 
+    return resultingArray;
   }
-)
+);
 
 const destroyTorrentServer = electronIpcMain.handle(
-    "torrent:destroyTorrentClient",
-    (event) => {
-        cleanupServer()
-    }
-)
+  "torrent:destroyTorrentClient",
+  (event) => {
+    cleanupServer();
+  }
+);
 
 function cleanupServer() {
-    if (server != null){
-        console.log("close!!")
-        server.close()
-    }
+  if (server != null) {
+    console.log("close!!");
+    server.close();
+  }
 }
 
-function cleanupFiles(){
+function cleanupFiles() {
   //This function cleans up all the temp files stored inside!
-  let tempFilePath = nodeElectron.app.getPath("temp") + "\\webtorrent"
-  
+  let tempFilePath = nodeElectron.app.getPath("temp") + "\\webtorrent";
+
   fs.readdir(tempFilePath, (err, files) => {
     if (err) throw err;
-    for (const file of files){
+    for (const file of files) {
       fs.unlink(path.join(tempFilePath, file), (err) => {
         if (err) throw err;
-      })
+      });
     }
-  })
-
+  });
 }
 
-module.exports = { openTorrentServer, destroyTorrentServer, handleReturnParsedScript, cleanupFiles };
+module.exports = {
+  openTorrentServer,
+  destroyTorrentServer,
+  handleReturnParsedScript,
+  cleanupFiles,
+};
