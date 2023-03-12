@@ -129,7 +129,7 @@ async function identifyEpisodeIndex(
   }
 
   //Otherwise, filter again for resolution!!
-  let resultingArrayRes = result.filter(function (el: any) {
+  let resultingArrayRes = resultingArrayEp.filter(function (el: any) {
     return el.video_resolution == resolution;
   });
 

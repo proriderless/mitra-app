@@ -142,6 +142,8 @@ function AnimeInfoViewer(props: IProps) {
       .catch((error) => {
         console.log("Something went wrong!");
       });
+
+     
   }, [malId]);
 
   React.useEffect(() => {
