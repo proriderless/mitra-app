@@ -4,6 +4,9 @@ import * as cheerio from "cheerio";
 import antimony from "anitomyscript";
 import { Resolution, ETorrentIpcListener } from "../../Utils/enums";
 
+//ALTERNATIVE - Using Streaming consumet sources
+import {ANIME} from '@consumet/extensions'
+
 declare global {
   interface Window {
     ipcRenderer: any;

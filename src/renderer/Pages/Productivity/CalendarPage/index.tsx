@@ -5,15 +5,20 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import Button from "@mui/material/Button";
+import { DefaultNewButton } from "../../../Utils/componentStyle";
 import SetEvent from "./SetEvent";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { DateTime } from "luxon";
-import { ESchedulerIpcListener, EUpdateMode, EAlertType } from "../../../Utils/enums";
-import rrulePlugin from '@fullcalendar/rrule'
+import {
+  ESchedulerIpcListener,
+  EUpdateMode,
+  EAlertType,
+} from "../../../Utils/enums";
+import rrulePlugin from "@fullcalendar/rrule";
 import PromptDialog from "../../../UiComponents/PromptDialog";
 import axios from "axios";
-import AlertCard from '../../../UiComponents/AlertCard'
+import AlertCard from "../../../UiComponents/AlertCard";
 
 //import css
 import "@fullcalendar/daygrid/main.css";
@@ -24,7 +29,7 @@ import { handleDeleteEvent, updateScheduleFile } from "./utils";
 declare global {
   interface Window {
     ipcRenderer: any;
-    envVars:any;
+    envVars: any;
   }
 }
 
@@ -32,52 +37,61 @@ function CalendarPage() {
   const calendarRef = React.useRef<any>();
   const [loadEvents, setLoadEvents] = React.useState<any>([]);
   const [openSetEventDialog, setOpenSetEventDialog] = React.useState(false);
-  const [selectedDate, setSelectedDate] = React.useState<DateTime>(DateTime.now());
+  const [selectedDate, setSelectedDate] = React.useState<DateTime>(
+    DateTime.now()
+  );
   const [globalIDState, setGlobalIDState] = React.useState<number>(1);
   const [reloadCalendar, setReloadCalendar] = React.useState(true);
-  const [existingID, setExistingID] = React.useState<number>()
-  const [updateMode, setUpdateMode] = React.useState<EUpdateMode>(EUpdateMode.NEW)
+  const [existingID, setExistingID] = React.useState<number>();
+  const [updateMode, setUpdateMode] = React.useState<EUpdateMode>(
+    EUpdateMode.NEW
+  );
 
   //Prompt Dialog Stuff
-  const [openPromptDialog, setOpenPromptDialog] = React.useState(false)
-  const [eventTitle, setEventTitle] = React.useState('')
-  const [eventDesc, setEventDesc] = React.useState('')
+  const [openPromptDialog, setOpenPromptDialog] = React.useState(false);
+  const [eventTitle, setEventTitle] = React.useState("");
+  const [eventDesc, setEventDesc] = React.useState("");
 
   //ALERT
-  const [alertMode, setAlertMode] = React.useState(EAlertType.SUCCESS)
-  const [alertText, setAlertText] = React.useState('')
-  const [alertOn, setAlertOn] = React.useState(false)
+  const [alertMode, setAlertMode] = React.useState(EAlertType.SUCCESS);
+  const [alertText, setAlertText] = React.useState("");
+  const [alertOn, setAlertOn] = React.useState(false);
 
-  function getFileFromDb(){
-    const syncFileFromDb = `${window.envVars.SERVER_URL}/api/v1/get_schedule`
+  function getFileFromDb() {
+    const syncFileFromDb = `${window.envVars.SERVER_URL}/api/v1/get_schedule`;
     let axiosConfig = {
       headers: {
-        authorization: window.envVars.ACCESS_TOKEN
+        authorization: window.envVars.ACCESS_TOKEN,
+      },
+    };
+    axios.get(syncFileFromDb, axiosConfig).then(function (response) {
+      console.log(response);
+      let resultJSON = response.data;
+      for (let schedule of resultJSON) {
+        delete schedule["_id"];
       }
-    }
-    axios.get(syncFileFromDb, axiosConfig)
-      .then(function (response) {
-        console.log(response)
-        let resultJSON = response.data
-        for (let schedule of resultJSON) {
-             delete schedule["_id"];
-          
-       }
-       let updateFile = {schedule: resultJSON}
-       updateScheduleFile(resultJSON)
-       setAlertOn(true)
-       setAlertMode(EAlertType.SUCCESS)
-       setAlertText('Retrieve success!')
+      let updateFile = { schedule: resultJSON };
 
-        //Retrieve and reload
-       retrieveScheduleFile();
-       setReloadCalendar(false);
-        //updateCalendarSize();
-       setTimeout(updateCalendarSize, 500);
-       setTimeout(updateCalendarSize, 500);
-       console.log("run once");
-      })
+      //There might be an issue with this command as this command does not finish
+      //before retrieve schedulefile is called. There is an async component inside.
+      //Even if this function isn't async. Might need to wait for it to reply something.
+      //Before continuing.
 
+      updateScheduleFile(resultJSON);
+
+      //The rest is fine
+      setAlertOn(true);
+      setAlertMode(EAlertType.SUCCESS);
+      setAlertText("Retrieve success!");
+
+      //Retrieve and reload
+      retrieveScheduleFile();
+      setReloadCalendar(false);
+      //updateCalendarSize();
+      setTimeout(updateCalendarSize, 500);
+      setTimeout(updateCalendarSize, 500);
+      console.log("run once");
+    });
   }
 
   function retrieveScheduleFile() {
@@ -99,58 +113,59 @@ function CalendarPage() {
   }
 
   function updateLocalFileToServer() {
-      const syncFileToServerURL = `${window.envVars.SERVER_URL}/api/v1/sync_local_file`
-      let axiosConfig = {
-        headers: {
-          authorization: window.envVars.ACCESS_TOKEN
-        }
-      }
-      let eventJSON = JSON.stringify(loadEvents)
-      axios.post(syncFileToServerURL, {calendarObject: eventJSON}, axiosConfig)
+    const syncFileToServerURL = `${window.envVars.SERVER_URL}/api/v1/sync_local_file`;
+    let axiosConfig = {
+      headers: {
+        authorization: window.envVars.ACCESS_TOKEN,
+      },
+    };
+    let eventJSON = JSON.stringify(loadEvents);
+    axios
+      .post(syncFileToServerURL, { calendarObject: eventJSON }, axiosConfig)
       .then(function (response) {
-        console.log(response)
-        setAlertOn(true)
-        setAlertMode(EAlertType.SUCCESS)
-        setAlertText('Update is successful')
+        console.log(response);
+        setAlertOn(true);
+        setAlertMode(EAlertType.SUCCESS);
+        setAlertText("Update is successful");
       })
       .catch(function (error) {
-        console.log(error)
-        setAlertOn(true)
-        setAlertMode(EAlertType.ERROR)
-        setAlertText('Update has failed, check console.log')
-      })
+        console.log(error);
+        setAlertOn(true);
+        setAlertMode(EAlertType.ERROR);
+        setAlertText("Update has failed, check console.log");
+      });
   }
 
-  function removeLoadEvents(id:string) {
-    let copArr = handleDeleteEvent(id, loadEvents)
-    
-    setLoadEvents(copArr)
-    updateScheduleFile(copArr)
+  function removeLoadEvents(id: string) {
+    let copArr = handleDeleteEvent(id, loadEvents);
+
+    setLoadEvents(copArr);
+    updateScheduleFile(copArr);
   }
 
   //Handle event click callback
-  function handleEventClickCallBack(info:any) {
-    info.jsEvent.preventDefault()
-    console.log(info.event)
-    setExistingID(info.event.id)
-    setEventTitle(`Event: ${info.event.title}`)
-    setEventDesc(`${info.event.extendedProps.description}`)
-    setOpenPromptDialog(true)
+  function handleEventClickCallBack(info: any) {
+    info.jsEvent.preventDefault();
+    console.log(info.event);
+    setExistingID(info.event.id);
+    setEventTitle(`Event: ${info.event.title}`);
+    setEventDesc(`${info.event.extendedProps.description}`);
+    setOpenPromptDialog(true);
   }
 
-  function handlePromptUpdate(){
-    setUpdateMode(EUpdateMode.UPDATE)
-    handleSetEventDialogOpen()
-    setOpenPromptDialog(false)
+  function handlePromptUpdate() {
+    setUpdateMode(EUpdateMode.UPDATE);
+    handleSetEventDialogOpen();
+    setOpenPromptDialog(false);
   }
 
   function handlePromptDelete() {
-    removeLoadEvents(String(existingID))
-    setOpenPromptDialog(false)
+    removeLoadEvents(String(existingID));
+    setOpenPromptDialog(false);
   }
 
   function handlePromptClose() {
-    setOpenPromptDialog(false)
+    setOpenPromptDialog(false);
   }
 
   React.useEffect(() => {
@@ -193,25 +208,30 @@ function CalendarPage() {
   function dateClickUpdate(dateClickInfo: any) {
     let copDateClickInfo = { ...dateClickInfo };
     setSelectedDate(DateTime.fromISO(copDateClickInfo.dateStr));
-    setUpdateMode(EUpdateMode.NEW)
+    setUpdateMode(EUpdateMode.NEW);
     setOpenSetEventDialog(!openSetEventDialog);
   }
 
   return (
     <>
-      <Button variant="contained" onClick={updateCalendarSize}>
+      <DefaultNewButton variant="contained" onClick={updateCalendarSize}>
         Show Folder
-      </Button>
+      </DefaultNewButton>
 
-      <Button variant="contained" onClick={updateLocalFileToServer}>
+      <DefaultNewButton variant="contained" onClick={updateLocalFileToServer}>
         Sync file to server
-      </Button>
+      </DefaultNewButton>
 
-      <Button variant="contained" onClick={getFileFromDb}>
+      <DefaultNewButton variant="contained" onClick={getFileFromDb}>
         Load files from server
-      </Button>
+      </DefaultNewButton>
 
-      <AlertCard alertMode={alertMode} alertText={alertText} alertClose={alertOn} alertCloseFunc={setAlertOn} />
+      <AlertCard
+        alertMode={alertMode}
+        alertText={alertText}
+        alertClose={alertOn}
+        alertCloseFunc={setAlertOn}
+      />
 
       {!reloadCalendar && (
         <FullCalendar
@@ -245,9 +265,9 @@ function CalendarPage() {
         title={eventTitle}
         content={eventDesc}
         acceptFunc={handlePromptUpdate}
-        acceptText={'Update Event'}
+        acceptText={"Update Event"}
         notAcceptFunc={handlePromptDelete}
-        notAcceptText={'Delete Event'}
+        notAcceptText={"Delete Event"}
       />
 
       <SetEvent

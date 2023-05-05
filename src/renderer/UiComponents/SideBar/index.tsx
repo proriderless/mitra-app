@@ -3,7 +3,12 @@ import ListSubheader from "@mui/material/ListSubheader";
 import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
 import List from "@mui/material/List";
 import IconButton from "@mui/material/IconButton";
-import { DrawerHeader, Drawer } from "./SideBarStyledComp";
+import {
+  DrawerHeader,
+  Drawer,
+  StyledSideBarList,
+  StyledInnerSideBarList,
+} from "./SideBarStyledComp";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Divider from "@mui/material/Divider";
@@ -98,8 +103,12 @@ function SideBarComp() {
 
       <Divider />
 
-      <List
-        sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+      <StyledSideBarList
+        sx={{
+          width: "100%",
+          maxWidth: 360,
+          //bgcolor: "background.paper",
+        }}
         component="nav"
         aria-labelledby="nested-list-subheader"
         subheader={
@@ -121,10 +130,10 @@ function SideBarComp() {
             <MovieIcon />
           </ListItemIcon>
           <ListItemText primary="Productivity" />
-          {openAnimeList ? <ExpandLess /> : <ExpandMore />}
+          {openProductivityList ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
-        <Collapse in={openProductivityList} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
+        <Collapse in={openProductivityList} timeout="auto" unmountOnExit >
+          <StyledInnerSideBarList component="div" disablePadding>
             <ListItemButton
               onClick={() =>
                 handleClickTraverse(
@@ -139,7 +148,7 @@ function SideBarComp() {
               </ListItemIcon>
               <ListItemText primary="Calendar" />
             </ListItemButton>
-          </List>
+          </StyledInnerSideBarList>
         </Collapse>
 
         <ListItemButton onClick={handleClickAnime}>
@@ -150,7 +159,7 @@ function SideBarComp() {
           {openAnimeList ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={openAnimeList} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
+          <StyledInnerSideBarList component="div" disablePadding>
             <ListItemButton
               onClick={() =>
                 handleClickTraverse(EBasePage.ANIME, EAnime.SEARCH_VIEWER)
@@ -185,7 +194,7 @@ function SideBarComp() {
               </ListItemIcon>
               <ListItemText primary="Now Playing" />
             </ListItemButton>
-          </List>
+          </StyledInnerSideBarList>
         </Collapse>
 
         <ListItemButton onClick={handleClickImage}>
@@ -196,7 +205,7 @@ function SideBarComp() {
           {openImageViewerList ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={openImageViewerList} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
+          <StyledInnerSideBarList component="div" disablePadding>
             <ListItemButton
               onClick={() =>
                 handleClickTraverse(EBasePage.GALLERY, EGallery.EXPLORER)
@@ -208,7 +217,7 @@ function SideBarComp() {
               </ListItemIcon>
               <ListItemText primary="Explorer" />
             </ListItemButton>
-          </List>
+          </StyledInnerSideBarList>
         </Collapse>
 
         <ListItemButton onClick={() => openStartupFile()}>
@@ -217,7 +226,7 @@ function SideBarComp() {
           </ListItemIcon>
           <ListItemText primary="Open Settings Folder" />
         </ListItemButton>
-      </List>
+      </StyledSideBarList>
     </Drawer>
   );
 }

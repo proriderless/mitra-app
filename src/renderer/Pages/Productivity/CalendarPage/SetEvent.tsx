@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "@mui/material/Button";
+import { DefaultNewButton } from "../../../Utils/componentStyle";
 import Dialog, { DialogProps } from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -330,6 +331,7 @@ function SetEvent(props: IProps) {
       onClose={setCloseDialog}
       aria-labelledby="responsive-dialog-title"
     >
+      <div style={{ backgroundColor: "black", border: "white", borderWidth: "2px"}}>
       <DialogTitle id="responsive-dialog-title">
         {"Set your event date"}
       </DialogTitle>
@@ -545,9 +547,10 @@ function SetEvent(props: IProps) {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={setCloseDialog}>Close</Button>
-        <Button onClick={handleNewUpdateEvent}>Set Event</Button>
+        <DefaultNewButton onClick={setCloseDialog}>Close</DefaultNewButton>
+        <DefaultNewButton onClick={handleNewUpdateEvent}>Set Event</DefaultNewButton>
       </DialogActions>
+      </div>
     </Dialog>
   );
 }

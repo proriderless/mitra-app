@@ -128,6 +128,7 @@ function AnimeInfoViewer(props: IProps) {
       }
     }
   }
+  
 
   React.useEffect(() => {
     console.log("show");
@@ -142,7 +143,6 @@ function AnimeInfoViewer(props: IProps) {
       .catch((error) => {
         console.log("Something went wrong!");
       });
-
      
   }, [malId]);
 

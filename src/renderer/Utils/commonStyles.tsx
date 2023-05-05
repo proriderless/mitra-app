@@ -1,5 +1,4 @@
 import styled from "styled-components";
-
 interface IFullContainerView{
     width?: string,
     height?: string,

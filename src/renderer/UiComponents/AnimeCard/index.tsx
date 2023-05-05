@@ -163,7 +163,7 @@ function AnimeCard(props: IProps) {
               sx={{ flexWrap: "wrap" }}
             >
               {themesGenres.map((str, i) => (
-                <Chip key={i} label={str} sx={{ backgroundColor: "#1de9b6" }} />
+                <Chip key={i} label={str} sx={{ backgroundColor: "#29AB87" }} />
               ))}
             </Stack>
           </Box>

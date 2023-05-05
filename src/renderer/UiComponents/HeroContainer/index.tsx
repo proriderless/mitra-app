@@ -45,7 +45,7 @@ function HeroComponent(props: IProps) {
           //height: "100%",
           WebkitBackdropFilter: "blur(5px)",
           background:
-            "linear-gradient(90deg, rgba(51,235,190,0.47942927170868344) 0%, rgba(67,244,186,1) 100%);",
+            "linear-gradient(90deg, rgba(41,171,135,0.47942927170868344) 0%, rgba(67,244,186,1) 100%);",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

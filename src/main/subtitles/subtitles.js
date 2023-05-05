@@ -57,7 +57,7 @@ function createAssFormat(trackInfoHeader, trackInfoSubtitles) {
     }
 
     subtitleString += subtitleText.layer + ",";
-    subtitleString += msToTime(Number(subtitleText.time)) + ",";
+    subtitleString += msToTime( Number(subtitleText.time)) + ",";
     subtitleString +=
       msToTime(Number(subtitleText.time) + Number(subtitleText.duration)) + ",";
     subtitleString += subtitleText.style + ",";

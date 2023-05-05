@@ -16,32 +16,30 @@ let tabPageState: ITabPageStore = {
 };
 
 export const themeOptions = {
+  typography: {
+    fontFamily: 'Barlow, Arial'
+  },
   palette: {
     mode: 'dark' as PaletteMode,
     primary: {
-      main: '#00da61',
+      main: '#29AB87',
     },
     secondary: {
-      main: '#7deba7',
+      main: '#29AB87',
     },
   },
   components: {
-    MuiButton: {
-        styleOverrides: {
-            root: {
-              background: 'linear-gradient(45deg, #28313B 30%, #485461 90%)',
-              border: 0,
-              borderRadius: 20,
-              //boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-              color: 'white',
-              height: 48,
-              padding: '0 30px',
-            }
-        }
-    },
+ 
     MuiCssBaseline: {
       styleOverrides: {
         body: {
+          "@font-face": {
+            fontFamily: "Barlow",
+            fontStyle: "normal",
+            fontWeight: "400",
+            src: "url(https://fonts.gstatic.com/s/barlow/v12/7cHpv4kjgoGqM7E_DMs5.woff2) format('woff2')",
+            unicodeRange: "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+          },
           scrollbarColor: "#6b6b6b #2b2b2b",
           "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
             backgroundColor: "#2b2b2b",
