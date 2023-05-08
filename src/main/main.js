@@ -7,39 +7,76 @@ const {
   Notification,
 } = require("electron");
 const path = require("path");
+const url = require("url");
 const isDev = require("electron-is-dev");
 const dotenv = require("dotenv").config();
+const {
+  setupTitlebar,
+  attachTitlebarToWindow,
+} = require("custom-electron-titlebar/main");
 
 //Custom process to run
 const startupProcess = require("./startup/startup");
 const torrent = require("./torrent/torrent");
+
+//https://mmazzarolo.com/blog/2021-08-12-building-an-electron-application-using-create-react-app/
 
 // webPreferences: {
 //   preload: path.join(__dirname, preload.js),
 //   nodeIntegration: true
 // }
 
+setupTitlebar();
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    titleBarStyle: "hidden",
     webPreferences: {
       nodeIntegrationInWorker: true,
-      preload: path.join(__dirname, "preload.js"),
+      // preload: path.join(__dirname, "preload.js"),
+      preload: `${__dirname}/preload.js`,
       webSecurity: false,
     },
   });
 
+  console.log("TESTINGV222");
+  console.log(`${__dirname}/preload.js`);
+
   // and load the index.html of the app.
+  // mainWindow.loadURL(
+  //   isDev
+  //     ? "http://localhost:3000"
+  //     : `file://${path.join(__dirname, "../build/index.html")}`
+  // );
+
   mainWindow.loadURL(
-    isDev
-      ? "http://localhost:3000"
-      : `file://${path.join(__dirname, "../build/index.html")}`
+    isDev ? "http://localhost:3000" : `file://${__dirname}/../../build/index.html`
   );
 
+  // // mainWindow.loadURL(
+  // //   `file://${path.join(__dirname, "../../build/index.html")}`
+  // // );
+
+  // mainWindow.loadURL(
+  //   `file://${__dirname}/../../build/index.html`
+  // );
+
+  // const appURL = app.isPackaged
+  //   ? url.format({
+  //       pathname: path.join(__dirname, "index.html"),
+  //       protocol: "file:",
+  //       slashes: true,
+  //     })
+  //   : "http://localhost:3000";
+
+  //mainWindow.loadURL(appURL);
+
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools();
+  attachTitlebarToWindow(mainWindow);
 }
 
 // This method will be called when Electron has finished
@@ -77,7 +114,7 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", function () {
-  torrent.cleanupFiles()
+  torrent.cleanupFiles();
   if (process.platform !== "darwin") app.quit();
 });
 

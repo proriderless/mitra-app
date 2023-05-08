@@ -16,6 +16,8 @@ interface ITabPageStore {
 function App() {
   const drawerWidth = "240";
 
+  console.log('alter v1')
+
   //Initialize Tab Origin pages
   /* 
     Format: base page: sub page
@@ -28,7 +30,7 @@ function App() {
   */
 
   return (
-    <Box sx={{ display: "flex", fontFamily: "Barlow", }}>
+    <Box sx={{ display: "flex", fontFamily: "Barlow" }}>
       <Box
         component="nav"
         sx={{

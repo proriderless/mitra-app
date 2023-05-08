@@ -1,6 +1,8 @@
 const contextBridge = require("electron").contextBridge;
 const ipcRenderer = require("electron").ipcRenderer;
 
+const { Titlebar, Color } = require("custom-electron-titlebar");
+
 const mediaPreloadIPCID = [
   "dialog:openMediaFile",
   "dialog:openMediaDirectorySelect",
@@ -23,6 +25,13 @@ const fullSendReceiveIPCID = [
   miscPreloadIPCID,
   torrentPreloadIPCID
 ].flat(1);
+
+window.addEventListener("DOMContentLoaded", () => {
+  new Titlebar({
+    itemBackgroundColor: Color.fromHex("#696969")
+  })
+
+})
 
 const ipc = {
   render: {

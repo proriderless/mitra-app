@@ -3,6 +3,7 @@
 export enum EBasePage {
     HOME = 'Home',
     ANIME = 'Anime',
+    MANGA = 'Manga',
     GALLERY = 'Gallery',
     PRODUCTIVITY = 'Productivity'
   }
@@ -15,6 +16,10 @@ export enum EAnime {
     SEARCH_VIEWER = 'Search Viewer',
     SEASON_VIEWER = 'Season Viewer',
     TORRENT_VIEWER = 'Torrent Viewer'
+}
+
+export enum EManga {
+    SEARCH_VIEWER = 'Manga Search Viewer'
 }
 
 export enum EProductivity {

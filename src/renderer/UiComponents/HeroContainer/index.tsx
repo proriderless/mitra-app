@@ -87,10 +87,9 @@ function HeroComponent(props: IProps) {
               }
             }
           >
-            <Typography component="div" variant="h5">
+            <Typography component="div" variant="h3">
               {title}
             </Typography>
-
             <Typography component="div" variant="body1">
               {title_jap}
             </Typography>

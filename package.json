@@ -1,7 +1,10 @@
 {
+  "author": "Raze",
+  "description": "Fun package",
   "name": "mitra-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "@consumet/extensions": "^1.4.17",
     "@emotion/react": "^11.9.3",
@@ -31,10 +34,12 @@
     "anitomyscript": "^2.0.4",
     "axios": "^0.27.2",
     "cheerio": "^1.0.0-rc.12",
+    "custom-electron-titlebar": "^4.1.6",
     "debounce": "^1.2.1",
     "dotenv": "^16.0.2",
-    "electron": "^19.0.8",
+    "electron-is-dev": "^2.0.0",
     "fluent-ffmpeg": "^2.1.2",
+    "got": "^11.8.3",
     "jassub": "^1.1.8",
     "jikan4.js": "^1.2.0",
     "luxon": "^3.0.1",
@@ -47,7 +52,7 @@
     "react-dom": "^18.2.0",
     "react-player": "^2.10.0",
     "react-router": "^6.3.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "rrule": "^2.7.1",
     "styled-components": "^5.3.5",
     "typescript": "^4.7.4",
@@ -56,11 +61,13 @@
     "xml-js": "^1.6.11",
     "zero-fill": "^2.2.4"
   },
-  "main": "./src/main/main.js",
+  "main": "./public/electron.js",
   "files": [
     "dist",
     "README.md",
-    "src/**"
+    "src/**",
+    "./build/**/*",
+    "./src/main/main.js"
   ],
   "scripts": {
     "start": "react-app-rewired start",
@@ -68,7 +75,9 @@
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
     "dev": "concurrently -k \"npm start\" \"npm:electron\"",
-    "electron": "wait-on tcp:3000 && electron ."
+    "electron": "wait-on tcp:3000 && electron .",
+    "dist:windows": "electron-builder --windows",
+    "build-and-package": "react-app-rewired build && electron-builder --windows -c.extraMetadata.main=build/electron.js"
   },
   "eslintConfig": {
     "extends": [
@@ -99,7 +108,8 @@
     "buffer": "^6.0.3",
     "concurrently": "^7.2.2",
     "crypto-browserify": "^3.12.0",
-    "electron-is-dev": "^2.0.0",
+    "electron": "^24.2.0",
+    "electron-builder": "^23.6.0",
     "https-browserify": "^1.0.0",
     "os-browserify": "^0.3.0",
     "process": "^0.11.10",
@@ -108,5 +118,26 @@
     "stream-http": "^3.2.0",
     "url": "^0.11.0",
     "wait-on": "^6.0.1"
+  },
+
+  "build": {
+    "appId": "com.mitra.mainapp",
+    "files": ["build/**/*", "node_modules/**/*", "./public/electron.js"],
+    "extraFiles": [
+      "src/main/**/*"
+    ],  
+    "productName": "Mitra",
+    "directories": {
+      "buildResources": "public"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "deb"
+    }
   }
 }

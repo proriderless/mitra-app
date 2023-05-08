@@ -32,6 +32,7 @@ import {
   EAnime,
   EProductivity,
   EIpcListener,
+  EManga,
 } from "../../Utils/enums";
 import { TabPageContext } from "../../Provider";
 
@@ -48,6 +49,7 @@ function SideBarComp() {
   const [openDrawer, setOpenDrawer] = React.useState(true);
   const [openProductivityList, setOpenProductivtyList] = React.useState(true);
   const [openAnimeList, setOpenAnimeList] = React.useState(true);
+  const [openMangaList, setOpenMangaList] = React.useState(true);
   const [openImageViewerList, setOpenImageViewerList] = React.useState(true);
 
   const { tabPages, setTabPages } = React.useContext(TabPageContext);
@@ -70,6 +72,10 @@ function SideBarComp() {
     setOpenAnimeList(!openAnimeList);
   };
 
+  const handleClickManga = () => {
+    setOpenMangaList(!openMangaList)
+  }
+
   const handleClickProductivity = () => {
     setOpenProductivtyList(!openProductivityList);
   };
@@ -89,7 +95,7 @@ function SideBarComp() {
 
   return (
     <Drawer variant="permanent" open={openDrawer}>
-      <DrawerHeader>
+      <DrawerHeader sx={{marginTop: "20px",}}>
         {openDrawer ? (
           <IconButton onClick={handleDrawerClose}>
             <ChevronLeftIcon />
@@ -193,6 +199,31 @@ function SideBarComp() {
                 <LiveTvIcon />
               </ListItemIcon>
               <ListItemText primary="Now Playing" />
+            </ListItemButton>
+          </StyledInnerSideBarList>
+        </Collapse>
+
+        {/* MANGA */}
+
+        <ListItemButton onClick={handleClickManga}>
+          <ListItemIcon>
+            <MovieIcon />
+          </ListItemIcon>
+          <ListItemText primary="Manga" />
+          {openMangaList ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={openMangaList} timeout="auto" unmountOnExit>
+          <StyledInnerSideBarList component="div" disablePadding>
+            <ListItemButton
+              onClick={() =>
+                handleClickTraverse(EBasePage.MANGA, EManga.SEARCH_VIEWER)
+              }
+              sx={{ pl: 3 }}
+            >
+              <ListItemIcon>
+                <CalendarViewMonthIcon />
+              </ListItemIcon>
+              <ListItemText primary="Search" />
             </ListItemButton>
           </StyledInnerSideBarList>
         </Collapse>

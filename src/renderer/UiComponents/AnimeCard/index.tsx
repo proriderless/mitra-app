@@ -78,7 +78,7 @@ function AnimeCard(props: IProps) {
     tmpResultText += type + " - ";
     tmpResultText += duration + " - ";
     tmpResultText += episodes + " Episodes - ";
-    tmpResultText += "Score: " + score;
+    tmpResultText += "🌟 Score: " + score;
 
     setSummaryStats(tmpResultText);
 

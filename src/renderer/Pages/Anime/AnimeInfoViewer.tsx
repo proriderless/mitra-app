@@ -168,7 +168,7 @@ function AnimeInfoViewer(props: IProps) {
       tmpResultText += animeInfo?.type + " - ";
       tmpResultText += animeInfo?.duration + " - ";
       tmpResultText += animeInfo?.episodes + " Episodes - ";
-      tmpResultText += "Score: " + animeInfo?.score;
+      tmpResultText += "🌟 Score: " + animeInfo?.score;
 
       setSummaryStats(tmpResultText);
       setAnimeTitle(animeInfo?.title);
@@ -196,7 +196,7 @@ function AnimeInfoViewer(props: IProps) {
           isTorrent={true}
         />
       )}
-      <AppBar sx={{ position: "relative" }}>
+      <AppBar sx={{ position: "relative", marginTop: "20px" }}>
         <Toolbar>
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
             Anime
