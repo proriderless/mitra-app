@@ -47,6 +47,7 @@
     "matroska-subtitles": "^3.3.2",
     "mousetrap": "^1.6.5",
     "path-browserify": "^1.0.1",
+    "qs": "^6.11.1",
     "react": "^18.2.0",
     "react-colorful": "^5.6.1",
     "react-dom": "^18.2.0",
@@ -119,13 +120,16 @@
     "url": "^0.11.0",
     "wait-on": "^6.0.1"
   },
-
   "build": {
     "appId": "com.mitra.mainapp",
-    "files": ["build/**/*", "node_modules/**/*", "./public/electron.js"],
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "./public/electron.js"
+    ],
     "extraFiles": [
       "src/main/**/*"
-    ],  
+    ],
     "productName": "Mitra",
     "directories": {
       "buildResources": "public"
