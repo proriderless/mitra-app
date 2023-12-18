@@ -99,8 +99,11 @@ function MediaPlayer(props:IProps) {
     setDurationPlayed(Number(newValue));
     videoRef.current?.seekTo(Number(newValue));
   };
+  
+  //SET A DEFAULT IF IT DOESN'T EXIST
+  let defaultSubtitle = "D:\\Desktop\\Projects\\Personal Projects\\Personal Program\\mitra-app\\testSubtitle.vtt"
 
-  function retrieveSubtitles() {
+  function retrieveSubtitles(subtitle = defaultSubtitle) {
     console.log("I'm running!")
     console.log(videoSrc)
     window.ipcRenderer
@@ -115,7 +118,7 @@ function MediaPlayer(props:IProps) {
         
         if (response !== "") {
           setSubtitleTrack(
-            "D:\\Desktop\\Projects\\Personal Projects\\Personal Program\\mitra-app\\testSubtitle.vtt"
+            subtitle
           );
         }
 

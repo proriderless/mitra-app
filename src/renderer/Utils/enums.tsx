@@ -1,7 +1,7 @@
 //Global Enums
 
 export enum EBasePage {
-    HOME = 'Home',
+    HOME = '🏠 Home',
     ANIME = 'Anime',
     MANGA = 'Manga',
     GALLERY = 'Gallery',
@@ -23,7 +23,7 @@ export enum EManga {
 }
 
 export enum EProductivity {
-    MAIN_CALENDAR = 'Main Calendar'
+    MAIN_CALENDAR = '📅 Main Calendar'
 }
 
 export enum EIpcListener {

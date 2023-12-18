@@ -10,7 +10,7 @@ export const FlexContainerCenter = styled("div")`
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: center;
-  padding: 2px 10px;
+  padding: 2px 5px;
 `;
 
 export const InlineContainer = styled("div")`
@@ -29,8 +29,8 @@ export const MediaVideoControlContainer = styled("div")<IMediaVideoControlContai
   left: 25%;
   bottom: 20px;
   width: 50%;
-  height: 35%;
-  max-height: 100px;
+  height: 18%;
+  max-height: 130px;
   z-index: 50;
   margin: 0 auto
 `;

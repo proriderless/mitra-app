@@ -1,21 +1,7 @@
 import React from "react";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import { WebTorrent } from "webtorrent";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import ImageSpotlight from "./ImageSpotlight";
-import VideoCard from "../../../UiComponents/VideoCard";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import { EIpcListener } from "../../../Utils/enums";
-import MediaPlayer from "../../../UiComponents/MediaPlayer";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { EmptySeparator, FullContainerView } from "../../../Utils/commonStyles";
 
 interface IProps {

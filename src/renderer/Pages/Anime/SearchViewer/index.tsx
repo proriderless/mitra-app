@@ -93,6 +93,7 @@ function SearchViewer() {
       <Dialog
         fullScreen
         open={openAnimeDialog}
+        onClose={handleAnimeClickClose}
         TransitionComponent={Transition}
       >
         <AnimeInfoViewer

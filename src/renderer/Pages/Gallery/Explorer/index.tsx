@@ -83,6 +83,7 @@ function Explorer() {
           return;
         } // Operation was aborted
 
+        console.log("IS IT THIS FUNCTION!????")
         var parsed_result = JSON.parse(pathResult);
         var imagePaths = parsed_result.imagePaths;
         var videoPaths = parsed_result.videoPaths;

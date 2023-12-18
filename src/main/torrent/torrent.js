@@ -74,7 +74,7 @@ function cleanupFiles() {
   //This function cleans up all the temp files stored inside!
   let tempFilePath = nodeElectron.app.getPath("temp") + "\\webtorrent";
 
-  //Ensure file exists
+  //Ensure file existsw
   if (fs.existsSync(tempFilePath) === true){
     fs.readdir(tempFilePath, (err, files) => {
       if (err) throw err;

@@ -19,10 +19,10 @@ import { styled } from "@mui/material/styles";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormHelperText from "@mui/material/FormHelperText";
+import FormControl from "@mui/material/FormControl";
 
 //Table
 import Table from "@mui/material/Table";
@@ -128,7 +128,6 @@ function AnimeInfoViewer(props: IProps) {
       }
     }
   }
-  
 
   React.useEffect(() => {
     console.log("show");
@@ -143,7 +142,6 @@ function AnimeInfoViewer(props: IProps) {
       .catch((error) => {
         console.log("Something went wrong!");
       });
-     
   }, [malId]);
 
   React.useEffect(() => {
@@ -153,7 +151,7 @@ function AnimeInfoViewer(props: IProps) {
     if (animeInfo != null) {
       setImgURL(animeInfo?.images.jpg.image_url);
 
-      let numOfEpisodes = determineNumOfEpisodes();
+      let numOfEpisodes = determineNumOfEpisodes(); 
       console.log("Num Of Eps " + numOfEpisodes);
       let episodeNames = [];
 
@@ -266,7 +264,16 @@ function AnimeInfoViewer(props: IProps) {
             </CardContentNoPadding>
           </Card>
 
-          <FormControl sx={{ m: 1, width: "80%", marginLeft: "10%", marginRight: "10%", marginTop: "10px", marginBottom: "2px"}}>
+          <FormControl
+            sx={{
+              m: 1,
+              width: "80%",
+              marginLeft: "10%",
+              marginRight: "10%",
+              marginTop: "10px",
+              marginBottom: "2px",
+            }}
+          >
             <InputLabel id="subgroup-change-select-label">Sub-Group</InputLabel>
             <Select
               labelId="subgroup-change-select-label"
@@ -277,6 +284,7 @@ function AnimeInfoViewer(props: IProps) {
             >
               <MenuItem value={"subsplease"}>SubsPlease</MenuItem>
               <MenuItem value={"erai-raws"}>Erai-Raws</MenuItem>
+              <MenuItem value={"horriblesubs"}>HorribleSubs</MenuItem>
             </Select>
           </FormControl>
 

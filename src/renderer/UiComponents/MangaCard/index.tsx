@@ -50,7 +50,7 @@ function MangaCard(props: IProps) {
   const deriveCoverContent = `https://mangadex.org/covers/${id}/${coverArtId}.512.jpg`;
 
   return (
-    <Card sx={{ display: "flex", width: "100%", marginTop: "2px", marginBottom: "2px", alignItems: "space-between"}}>
+    <Card sx={{ display: "flex", width: "100%", marginTop: "10px", marginBottom: "10px", alignItems: "space-between"}}>
       <CardMedia
         component="img"
         sx={{ width: "215px", objectFit: "cover" }}

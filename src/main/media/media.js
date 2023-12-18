@@ -17,7 +17,10 @@ const getDirectories = source =>
 function absoluteImagePaths(parentPath) {
   var imageFiles = []
   nodeFs.readdirSync(parentPath).forEach(file => {
-      let filterList = [".jpg", ".jpeg", ".png", ".gif", ".bmp"];
+      console.log("///// FILE TEST ////")
+      console.log(file)
+      console.log("///// FILE TEST ////")
+      let filterList = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".JPG", ".JPEG", ".PNG", ".GIF", ".BMP"];
       if (checkIfFileContainsExtension(filterList, file) === true) {
         imageFiles.push("mitra:///" + parentPath + nodePath.sep + file);
       }
@@ -80,6 +83,8 @@ const openImageDirectorySelect = electronIpcMain.handle(
       properties: ["openDirectory"],
     };
 
+    console.log("ARE YOU CALLED?")
+
     if (parentDirectory === "") {
       return electronDialog
         .showOpenDialog(options)
@@ -89,8 +94,10 @@ const openImageDirectorySelect = electronIpcMain.handle(
             return;
           }
 
+          console.log("CALL ME! TOP")
           let imagePaths = absoluteImagePaths(result.filePaths[0]);
           let videoPaths = absoluteVideoPaths(result.filePaths[0])
+          console.log(imagePaths)
           let directories = getDirectories(result.filePaths[0]);
 
           let returnObject = JSON.stringify({
@@ -106,6 +113,7 @@ const openImageDirectorySelect = electronIpcMain.handle(
           console.log(error);
         });
     } else {
+      console.log("CALL ME! BOTTOM")
       let imagePaths = absoluteImagePaths(parentDirectory);
       let videoPaths = absoluteVideoPaths(parentDirectory);
       let directories = getDirectories(parentDirectory);
