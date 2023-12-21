@@ -60,9 +60,10 @@
     "web-vitals": "^2.1.4",
     "webtorrent": "^1.8.26",
     "xml-js": "^1.6.11",
+    "yarn": "^1.22.21",
     "zero-fill": "^2.2.4"
   },
-  "main": "./public/electron.js",
+  "main": "./src/main/main.js",
   "files": [
     "dist",
     "README.md",

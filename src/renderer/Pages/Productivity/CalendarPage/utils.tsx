@@ -26,10 +26,15 @@ declare global {
 // }
 
 function convertDateToString(date: DateTime | null) {
-  if (date === null) {
+  if (date == null) {
     return "";
   }
-  return date.toISO().split("T")[0];
+  let dateISO = date.toISO();
+  if (dateISO == null) {
+    return ""
+  }
+
+  return dateISO.split("T")[0];
 }
 
 function convertDateTimeObjectToDuration(time: DateTime | null | undefined) {

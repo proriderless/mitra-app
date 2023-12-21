@@ -60,6 +60,7 @@ interface animeInfoReturn {
 }
 
 function AnimeInfoViewer(props: IProps) {
+  
   const { malId, handleClose } = props;
 
   const [loaded, setLoadedState] = React.useState(false);

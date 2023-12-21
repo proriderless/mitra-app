@@ -43,9 +43,36 @@ type IProps = {
 
 function MediaPlayer(props:IProps) {
 
+  //Streaming code
+
+  // useEffect(() => {
+  //   const video = videoRef.current;
+ 
+  //   const fetchVideo = (start = 0) => {
+  //     fetch(url, {
+  //       headers: {
+  //         'Range': `bytes=${start}-`
+  //       }
+  //     })
+  //     .then(response => response.blob())
+  //     .then(blob => {
+  //       video.src = URL.createObjectURL(blob);
+  //       video.play();
+  //     })
+  //     .catch(error => console.error('Error:', error));
+  //   };
+ 
+  //   video.onended = () => {
+  //     fetchVideo(video.currentTime);
+  //   };
+ 
+  //   fetchVideo();
+  // }, [url]);
+
   const {mediaSrc, setMediaPlayerVisible, isTorrent} = props
 
   const [videoSrc, setVideoSrc] = React.useState(mediaSrc);
+  const [streamedSrcUrl, setStreamedSrcUrl] = React.useState("");
   const [totalVideoDuration, setTotalVideoDuration] = React.useState<number>();
   const [durationPlayed, setDurationPlayed] = React.useState<number>(0);
   const [playingState, setPlayingState] = React.useState(false);
